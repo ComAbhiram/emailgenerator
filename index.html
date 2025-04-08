@@ -1,593 +1,1513 @@
-:root {
-    --primary-color: #f9c42f;
-    --secondary-color: #8c8c8e;
-    --dark-bg: #1a1a1a;
-    --darker-bg: #121212;
-    --text-color: #ffffff;
-    --text-secondary: #b3b3b3;
-    --border-color: #333333;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inter Smart QA Email Template Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Add this to your existing styles */
+        .template-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        .template-btn {
+            padding: 15px 20px;
+            border-radius: 10px;
+            background-color: #121212;
+            color: #f8f9fa;
+            border: 1px solid #343a40;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            text-align: center;
+        }
 
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #121212;
-    color: #f8f9fa;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
-    min-height: 100vh;
-}
+        .template-btn:hover {
+            background-color: #343a40;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Add this new style for the selected button */
+        .template-btn.selected {
+            background-color: #f39c12; /* Orange color for selected button */
+            color: #000;
+            border-color: #f39c12;
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+            transform: translateY(-3px);
+            font-weight: bold;
+        }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 200px; /* Increased padding to prevent footer overlap */
-}
+        /* This will create two rows of buttons */
+        @media (min-width: 768px) {
+            .template-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+        }
 
-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    position: relative;
-}
+        /* Add icons to leave buttons */
+        .template-btn[data-template="sick-leave"]::before,
+        .template-btn[data-template="casual-leave"]::before,
+        .template-btn[data-template="unpaid-leave"]::before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-right: 8px;
+        }
 
-.logo-container {
-    margin-bottom: 1.5rem;
-}
+        .template-btn[data-template="sick-leave"]::before {
+            content: "\f7f2"; /* Medical icon */
+        }
 
-.logo {
-    max-width: 150px;
-    height: auto;
-    filter: drop-shadow(0 0 10px rgba(251, 212, 2, 0.3));
-}
+        .template-btn[data-template="casual-leave"]::before {
+            content: "\f5ca"; /* Calendar icon */
+        }
 
-h1, h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #f39c12;
-}
+        .template-btn[data-template="unpaid-leave"]::before {
+            content: "\f53a"; /* Money icon */
+        }
+        
+        /* Style for placeholder text - make it white */
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+            opacity: 1 !important; /* Firefox */
+            font-size: 0.9rem !important;
+            font-style: normal !important;
+        }
 
-h3 {
-    color: #f8f9fa;
-    margin-top: 20px;
-    margin-bottom: 15px;
-}
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
 
-.template-selection {
-    margin-bottom: 30px;
-}
+        ::-ms-input-placeholder { /* Microsoft Edge */
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        
+        /* Style for action buttons in preview section */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-.template-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            background-color: #f39c12;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 16px;
+        }
 
-.template-group {
-    margin-bottom: 25px;
-    border-bottom: 1px solid #343a40;
-    padding-bottom: 15px;
-}
+        .action-btn:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+        }
 
-.template-group-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #f39c12;
-    margin-bottom: 15px;
-    padding-left: 10px;
-    border-left: 4px solid #f39c12;
-    text-align: left;
-}
+        .action-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Fixed Footer Styles */
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: #121212;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Add padding to the bottom of the page to prevent content from being hidden by the fixed footer */
+        main {
+            padding-bottom: 80px;
+        }
+        
+        /* Template group styles */
+        .template-group {
+            width: 100%;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #343a40;
+            padding-bottom: 10px;
+        }
+        
+        .template-group-title {
+            text-align: left;
+            margin-bottom: 15px;
+            color: #f39c12;
+            font-size: 18px;
+            font-weight: bold;
+            padding-left: 10px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .fixed-footer .primary-btn {
+            background-color: #f39c12;
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .fixed-footer .primary-btn:hover {
+            background-color: #e67e22;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 15px rgba(243, 156, 18, 0.4);
+        }
+        
+        .fixed-footer .primary-btn i {
+            font-size: 24px;
+        }
+        
+        .container {
+            padding-bottom: 100px; /* Add space for the fixed footer */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="Images/logo.png" alt="Logo" class="logo">
+            </div>
+            <h1>Email Template Generator</h1>
+        </header>
+        
+        <main>
+            <!-- Template Selection -->
+            <div class="template-selection">
+                <h2>Select Email Template</h2>
+                <div class="template-container">
+                    <div class="template-group">
+                        <h3 class="template-group-title">Dev Phase Templates</h3>
+                        <div class="template-buttons">
+                            <button class="template-btn" data-template="dev-testing-started">
+                                <i class="fas fa-rocket"></i>&nbsp; Dev Testing Started
+                            </button>
+                            <button class="template-btn" data-template="dev-testing-rejected">
+                                <i class="fas fa-ban"></i>&nbsp; Dev Testing Rejected
+                            </button>
+                            <button class="template-btn" data-template="dev-retesting-rejected">
+                                <i class="fas fa-times-circle"></i>&nbsp; Dev Retesting Rejected
+                            </button>
+                            <button class="template-btn" data-template="dev-retesting-completed">
+                                <i class="fas fa-check-circle"></i>&nbsp; Dev Retesting Completed
+                            </button>
+                        </div>
+                    </div>
 
-.template-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
-    justify-content: flex-start;
-}
+                    <div class="template-group">
+                        <h3 class="template-group-title">HTML Templates</h3>
+                        <div class="template-buttons">
+                            <button class="template-btn" data-template="html-comparison-started">
+                                <i class="fas fa-code"></i>&nbsp; HTML Comparison Started
+                            </button>
+                            <button class="template-btn" data-template="html-comparison-completed">
+                                <i class="fas fa-check-double"></i>&nbsp; HTML Comparison Completed
+                            </button>
+                        </div>
+                    </div>
 
-.template-btn {
-    padding: 12px 15px;
-    border-radius: 8px;
-    background-color: #1e272e;
-    color: #f8f9fa;
-    border: 1px solid #343a40;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    flex: 0 0 auto;
-    min-width: 200px;
-    display: flex;
-    align-items: center;
-}
+                    <div class="template-group">
+                        <h3 class="template-group-title">Before Live Templates</h3>
+                        <div class="template-buttons">
+                            <button class="template-btn" data-template="before-live-started">
+                                <i class="fas fa-hourglass-start"></i>&nbsp; Before Live Started
+                            </button>
+                            <button class="template-btn" data-template="before-live-approved-with-bugs">
+                                <i class="fas fa-exclamation-triangle"></i>&nbsp; Before Live Approved with Bugs
+                            </button>
+                            <button class="template-btn" data-template="before-live-approval">
+                                <i class="fas fa-award"></i>&nbsp; Before Live Approval
+                            </button>
+                            <button class="template-btn" data-template="before-live-rejected">
+                                <i class="fas fa-ban"></i>&nbsp; Before Live Rejected
+                            </button>
+                        </div>
+                    </div>
 
-.template-btn:hover {
-    background-color: #2d3748;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
+                    <div class="template-group">
+                        <h3 class="template-group-title">After Live Templates</h3>
+                        <div class="template-buttons">
+                            <button class="template-btn" data-template="after-live-started">
+                                <i class="fas fa-globe"></i>&nbsp; After Live Started
+                            </button>
+                            <button class="template-btn" data-template="after-live-completed">
+                                <i class="fas fa-check-circle"></i>&nbsp; After Live Completed
+                            </button>
+                        </div>
+                    </div>
 
-.template-btn.selected {
-    background-color: #f39c12;
-    color: #121212;
-    font-weight: 600;
-    border-color: #f39c12;
-    box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
-}
+                    <div class="template-group">
+                        <h3 class="template-group-title">Leave Templates</h3>
+                        <div class="template-buttons">
+                            <button class="template-btn" data-template="sick-leave">
+                                <i class="fas fa-medkit"></i>&nbsp; Sick Leave
+                            </button>
+                            <button class="template-btn" data-template="casual-leave">
+                                <i class="fas fa-umbrella-beach"></i>&nbsp; Casual Leave
+                            </button>
+                            <button class="template-btn" data-template="unpaid-leave">
+                                <i class="fas fa-wallet"></i>&nbsp; Unpaid Leave
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-.form-container {
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+            <!-- Template Form Container -->
+            <div class="form-container">
+                <form id="emailForm" class="template-form">
+                    <!-- Basic Info Section -->
+                    <div class="form-section basic-info-section">
+                        <h3>Basic Information</h3>
+                        <div class="custom-input">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="recipientName" placeholder="Recipient's Name">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-project-diagram"></i>
+                            <input type="text" id="projectName" placeholder="Project Name">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-signature"></i>
+                            <input type="text" id="senderName" placeholder="Your Name">
+                        </div>
+                    </div>
 
-.template-form {
-    background-color: var(--darker-bg);
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    margin-bottom: 120px;
-    border: 1px solid var(--border-color);
-    width: 100%;
-}
+                    <!-- URLs Section -->
+                    <div class="form-section urls-section" style="display: none;">
+                        <h3>URLs</h3>
+                        <div class="custom-input">
+                            <i class="fas fa-globe"></i>
+                            <input type="url" id="frontendUrl" placeholder="Frontend URL">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-server"></i>
+                            <input type="url" id="backendUrl" placeholder="Backend URL">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fab fa-gitlab"></i>
+                            <input type="url" id="bugTrackerUrl" placeholder="GitLab Bug Tracker URL">
+                        </div>
+                    </div>
 
-.form-section {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-}
+                    <!-- Tools and Browsers Section -->
+                    <div class="form-section tools-browsers-section" style="display: none;">
+                        <h3>Tools & Browsers</h3>
+                        <div class="custom-input">
+                            <i class="fas fa-tools"></i>
+                            <input type="text" id="testingTools" placeholder="Testing Tools Used">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-browser"></i>
+                            <input type="text" id="browsers" placeholder="Browsers Covered">
+                        </div>
+                    </div>
 
-/* Specific section styling */
-.tools-browsers-section,
-.dev-testing-started-section {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box !important;
-}
+                    <!-- Dev Testing Started Section -->
+                    <div class="form-section dev-testing-started-section" style="display: none;">
+                        <h3>Test Document Details</h3>
+                        <div class="custom-input">
+                            <i class="fas fa-file-alt"></i>
+                            <input type="text" id="testDocName" placeholder="Test Document Name">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-user-tie"></i>
+                            <input type="text" id="pcName" placeholder="Project Coordinator Name">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-user-shield"></i>
+                            <input type="text" id="teamLeadName" placeholder="Team Lead Name">
+                        </div>
+                        <div class="custom-input">
+                            <i class="fas fa-calendar-check"></i>
+                            <input type="date" id="approvalDeadline" placeholder="Approval Deadline">
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-/* Form group styling */
-.form-group {
-    width: 100%;
-    margin-bottom: 20px;
-}
+            <div class="preview-section" style="display: none;">
+                <h2>Generated Email</h2>
+                <div id="emailPreview" class="email-preview"></div>
+                <div class="action-buttons">
+                    <button id="backToForm" class="action-btn">Back to Form</button>
+                    <button id="copyEmail" class="action-btn" disabled>Copy Email</button>
+                </div>
+            </div>
 
-/* Input container styling */
-.custom-input {
-    width: 100%;
-    position: relative;
-    margin-bottom: 15px;
-}
+            <div class="form-section dev-completed-section" style="display: none;">
+                <h3>Testing Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="language">Content Language</label>
+                    <div class="custom-input">
+                        <i class="fas fa-language"></i>
+                        <input type="text" id="language" placeholder="e.g. English" required>
+                    </div>
+                </div>
+            </div>
 
-.custom-input input,
-.custom-input textarea,
-.custom-input select {
-    width: 100%;
-    box-sizing: border-box;
-}
+            <div class="form-section image-limits-section" style="display: none;">
+                <h3>Image Limits</h3>
+                <div class="form-group">
+                    <label for="sizeLimit">Current Size Limit</label>
+                    <div class="custom-input">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        <input type="text" id="sizeLimit" placeholder="e.g. 60KB" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="maxUploadLimit">Suggested Max Upload Limit</label>
+                    <div class="custom-input">
+                        <i class="fas fa-upload"></i>
+                        <input type="text" id="maxUploadLimit" placeholder="e.g. 300KB" required>
+                    </div>
+                </div>
+            </div>
 
-/* Dev testing started section specific fixes */
-.dev-testing-started-section {
-    width: auto !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-}
+            <div class="form-section issue-stats-section" style="display: none;">
+                <h3>Issue Statistics</h3>
+                <div class="form-group">
+                    <label for="totalIssues">Total Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <input type="number" id="totalIssues" placeholder="e.g. 93" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsCount">Bugs Count</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsCount" placeholder="e.g. 27" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="deviationsCount">Deviations</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <input type="number" id="deviationsCount" placeholder="e.g. 56" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="funcBugsCount">Functional Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-cogs"></i>
+                        <input type="number" id="funcBugsCount" placeholder="e.g. 8" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="htmlBugsCount">HTML Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-code"></i>
+                        <input type="number" id="htmlBugsCount" placeholder="e.g. 21" min="0" required>
+                    </div>
+                </div>
+            </div>
 
-.dev-testing-started-section .form-group {
-    width: auto !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-}
+            <div class="form-section dev-retesting-section" style="display: none;">
+                <h3>Retesting Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="previousTotalIssues">Previous Total Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <input type="number" id="previousTotalIssues" placeholder="e.g. 93" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="previousBugsCount">Previous Bugs Count</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="previousBugsCount" placeholder="e.g. 27" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="previousBugReportLink">Previous Bug Report Link</label>
+                    <div class="custom-input">
+                        <i class="fas fa-link"></i>
+                        <input type="url" id="previousBugReportLink" placeholder="e.g. https://gitlab.com/.../previous-report" required>
+                    </div>
+                </div>
+            </div>
 
-.dev-testing-started-section input,
-.dev-testing-started-section select,
-.dev-testing-started-section textarea {
-    width: 100% !important;
-}
+            <div class="form-section dev-retesting-rejected-section" style="display: none;">
+                <h3>Rejection Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="criticalBugs">Critical Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <input type="number" id="criticalBugs" placeholder="e.g. 5" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalIssues">Total Issues Reviewed</label>
+                    <div class="custom-input">
+                        <i class="fas fa-list-check"></i>
+                        <input type="number" id="totalIssues" placeholder="e.g. 93" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsCount">Total Bugs Identified</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsCount" placeholder="e.g. 27" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newBugs">New Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-plus-circle"></i>
+                        <input type="number" id="newBugs" placeholder="e.g. 20" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="otherBugs">Other Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="otherBugs" placeholder="e.g. 7" min="0" required>
+                    </div>
+                </div>
+            </div>
 
-.dev-testing-started-section .custom-input {
-    width: auto !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-}
+            <div class="form-section dev-retesting-completed-section" style="display: none;">
+                <h3>Retesting Completion Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalIssues">Total Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <input type="number" id="totalIssues" placeholder="e.g. 93" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="workingDays">Number of Working Days</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-week"></i>
+                        <input type="number" id="workingDays" placeholder="e.g. 2" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="delayReason">Reason for Delay (if any)</label>
+                    <div class="custom-input">
+                        <i class="fas fa-hourglass-half"></i>
+                        <input type="text" id="delayReason" placeholder="e.g. detailed content comparison taking an extra day">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reopenedIssues">Reopened Issues (0 if none)</label>
+                    <div class="custom-input">
+                        <i class="fas fa-redo"></i>
+                        <input type="number" id="reopenedIssues" placeholder="e.g. 5 (Enter 0 if no reopened issues)" min="0" value="0" required>
+                    </div>
+                </div>
+                <!-- Fields shown only when reopenedIssues > 0 -->
+                <div class="reopened-issues-details">
+                    <div class="form-group">
+                        <label for="reopenedBugs">Reopened Bugs</label>
+                        <div class="custom-input">
+                            <i class="fas fa-bug"></i>
+                            <input type="number" id="reopenedBugs" placeholder="e.g. 3" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reopenedHtmlBugs">Reopened HTML Bugs</label>
+                        <div class="custom-input">
+                            <i class="fas fa-code"></i>
+                            <input type="number" id="reopenedHtmlBugs" placeholder="e.g. 1" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reopenedFuncBugs">Reopened Functional Bugs</label>
+                        <div class="custom-input">
+                            <i class="fas fa-cogs"></i>
+                            <input type="number" id="reopenedFuncBugs" placeholder="e.g. 2" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="closedIssues">Closed Issues</label>
+                        <div class="custom-input">
+                            <i class="fas fa-check-circle"></i>
+                            <input type="number" id="closedIssues" placeholder="e.g. 88" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="closedBugs">Closed Bugs</label>
+                        <div class="custom-input">
+                            <i class="fas fa-check"></i>
+                            <input type="number" id="closedBugs" placeholder="e.g. 24" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="notFixedBugs">Not Fixed Bugs</label>
+                        <div class="custom-input">
+                            <i class="fas fa-times-circle"></i>
+                            <input type="number" id="notFixedBugs" placeholder="e.g. 2" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-/* Fix width issue in dev testing detail section */
-.dev-testing-started-section h3 {
-    width: 100%;
-    max-width: 100%;
-}
+            <div class="form-section dev-testing-rejected-section" style="display: none;">
+                <h3>Rejection Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="criticalBugs">Critical Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <input type="number" id="criticalBugs" placeholder="e.g. 5" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalIssues">Total Issues Reviewed</label>
+                    <div class="custom-input">
+                        <i class="fas fa-list-check"></i>
+                        <input type="number" id="totalIssues" placeholder="e.g. 93" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsCount">Total Bugs Identified</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsCount" placeholder="e.g. 27" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newBugs">New Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-plus-circle"></i>
+                        <input type="number" id="newBugs" placeholder="e.g. 20" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="otherBugs">Other Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="otherBugs" placeholder="e.g. 7" min="0" required>
+                    </div>
+                </div>
+            </div>
 
-.form-section h3 {
-    color: #f39c12;
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: 500;
-    border-bottom: 1px solid #343a40;
-    padding-bottom: 10px;
-}
+            <div class="form-section working-days-section" style="display: none;">
+                <h3>Duration</h3>
+                <div class="form-group">
+                    <label for="workingDays">Number of Working Days</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-week"></i>
+                        <input type="number" id="workingDays" placeholder="e.g. 2" min="1" required>
+                    </div>
+                </div>
+            </div>
 
-label {
-    display: block;
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
+            <div class="form-section before-live-started-section" style="display: none;">
+                <h3>Testing Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalIssuesResolved">Total Issues Resolved</label>
+                    <div class="custom-input">
+                        <i class="fas fa-check-circle"></i>
+                        <input type="number" id="totalIssuesResolved" placeholder="e.g. 90" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsFixed">Bugs Fixed</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsFixed" placeholder="e.g. 25" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="previousBugReportLink">Previous Bug Report Link</label>
+                    <div class="custom-input">
+                        <i class="fas fa-link"></i>
+                        <input type="url" id="previousBugReportLink" placeholder="e.g. https://gitlab.com/.../previous-report" required>
+                    </div>
+                </div>
+            </div>
 
-.custom-input i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #f39c12;
-}
+            <div class="form-section before-live-rejected-section" style="display: none;">
+                <h3>Rejection Details</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar"></i>
+                        <input type="text" id="startDate" placeholder="e.g. January 10, 2024" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="completionDate">Completion Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-check"></i>
+                        <input type="text" id="completionDate" placeholder="e.g. January 15, 2024" required>
+                    </div>
+                </div>
+                <h3>Issue Details</h3>
+                <div class="form-group">
+                    <label for="htmlIssues">HTML Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-code"></i>
+                        <input type="number" id="htmlIssues" placeholder="e.g. 12" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="funcIssues">Functional Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-cogs"></i>
+                        <input type="number" id="funcIssues" placeholder="e.g. 8" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="seoIssues">SEO Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-search"></i>
+                        <input type="number" id="seoIssues" placeholder="e.g. 5" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="brokenLinks">Broken Links</label>
+                    <div class="custom-input">
+                        <i class="fas fa-unlink"></i>
+                        <input type="number" id="brokenLinks" placeholder="e.g. 7" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customBugType">Custom Bug Type</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="text" id="customBugType" placeholder="e.g. Performance Issues" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customCount">Custom Bug Count</label>
+                    <div class="custom-input">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="number" id="customCount" placeholder="e.g. 3" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="keyFindings">Key Findings</label>
+                    <div class="custom-input">
+                        <i class="fas fa-clipboard-list"></i>
+                        <textarea id="keyFindings" placeholder="Provide detailed findings here..." rows="5" required></textarea>
+                    </div>
+                </div>
+            </div>
 
-.custom-input input,
-.custom-input textarea {
-    width: 100%;
-    padding: 12px 15px 12px 45px;
-    border: 1px solid #343a40;
-    border-radius: 8px;
-    background-color: #2d2d2d;
-    color: #fff;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
+            <div class="form-section before-live-approved-with-bugs-section" style="display: none;">
+                <h3>Testing Overview</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="frontendUrl">Frontend URL</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="url" id="frontendUrl" placeholder="e.g. https://www.lifesmoothies.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendUrl">Backend URL</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="url" id="backendUrl" placeholder="e.g. https://admin.lifesmoothies.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="custom-input">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="e.g. admin" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="custom-input">
+                        <i class="fas fa-lock"></i>
+                        <input type="text" id="password" placeholder="e.g. P@ssw0rd!" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="text" id="startDate" placeholder="e.g. March 10, 2024" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dueDate">End Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-check"></i>
+                        <input type="text" id="dueDate" placeholder="e.g. March 15, 2024" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalDays">Total Testing Duration (days)</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-week"></i>
+                        <input type="number" id="totalDays" placeholder="e.g. 5" min="1" required>
+                    </div>
+                </div>
+                
+                <h3>Browsers Tested</h3>
+                <div class="form-group">
+                    <label for="browser1">Browser 1</label>
+                    <div class="custom-input">
+                        <i class="fas fa-chrome"></i>
+                        <input type="text" id="browser1" placeholder="e.g. Chrome" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="browser2">Browser 2</label>
+                    <div class="custom-input">
+                        <i class="fas fa-firefox"></i>
+                        <input type="text" id="browser2" placeholder="e.g. Firefox" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="browser3">Browser 3</label>
+                    <div class="custom-input">
+                        <i class="fas fa-safari"></i>
+                        <input type="text" id="browser3" placeholder="e.g. Safari" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="browser4">Browser 4</label>
+                    <div class="custom-input">
+                        <i class="fas fa-edge"></i>
+                        <input type="text" id="browser4" placeholder="e.g. Edge" required>
+                    </div>
+                </div>
+                
+                <h3>Testing Metrics</h3>
+                <div class="form-group">
+                    <label for="totalTestCases">Total Test Cases Executed</label>
+                    <div class="custom-input">
+                        <i class="fas fa-tasks"></i>
+                        <input type="number" id="totalTestCases" placeholder="e.g. 120" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="passedTestCases">Passed Test Cases</label>
+                    <div class="custom-input">
+                        <i class="fas fa-check"></i>
+                        <input type="number" id="passedTestCases" placeholder="e.g. 120" min="0" required>
+                    </div>
+                </div>
+                
+                <h3>Issue Summary</h3>
+                <div class="form-group">
+                    <label for="totalBugs">Total Bugs (Found and Fixed)</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="totalBugs" placeholder="e.g. 25" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalFunctionalBugs">Total Functional Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-cogs"></i>
+                        <input type="number" id="totalFunctionalBugs" placeholder="e.g. 15" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalHtmlBugs">Total HTML Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-code"></i>
+                        <input type="number" id="totalHtmlBugs" placeholder="e.g. 8" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalSeoBugs">Total SEO Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-search"></i>
+                        <input type="number" id="totalSeoBugs" placeholder="e.g. 2" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalIssues">Total Issues</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <input type="number" id="totalIssues" placeholder="e.g. 35" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalClosedBugs">Total Closed Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-check-circle"></i>
+                        <input type="number" id="totalClosedBugs" placeholder="e.g. 25" min="0" required>
+                    </div>
+                </div>
+                
+                <h3>Previous Testing Summary</h3>
+                <div class="form-group">
+                    <label for="totalIssuesResolved">Total Issues Resolved</label>
+                    <div class="custom-input">
+                        <i class="fas fa-clipboard-check"></i>
+                        <input type="number" id="totalIssuesResolved" placeholder="e.g. 90" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsFixed">Bugs Fixed</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsFixed" placeholder="e.g. 25" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="previousBugReportLink">Previous Bug Report Link</label>
+                    <div class="custom-input">
+                        <i class="fas fa-link"></i>
+                        <input type="url" id="previousBugReportLink" placeholder="e.g. https://gitlab.com/.../previous-report" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugTrackerUrl">GitLab Bug Tracker URL</label>
+                    <div class="custom-input">
+                        <i class="fab fa-gitlab"></i>
+                        <input type="url" id="bugTrackerUrl" placeholder="e.g. https://gitlab.com/.../issues/" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section before-live-approval-section" style="display: none;">
+                <h3>Testing Summary</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="totalIssues">Total Issues Reviewed</label>
+                    <div class="custom-input">
+                        <i class="fas fa-list-check"></i>
+                        <input type="number" id="totalIssues" placeholder="e.g. 100" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsCount">Total Bugs Identified</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsCount" placeholder="e.g. 30" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="criticalBugs">Critical Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <input type="number" id="criticalBugs" placeholder="e.g. 5" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="majorBugs">Major Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <input type="number" id="majorBugs" placeholder="e.g. 10" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="minorBugs">Minor Bugs</label>
+                    <div class="custom-input">
+                        <i class="fas fa-info-circle"></i>
+                        <input type="number" id="minorBugs" placeholder="e.g. 15" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="performanceScore">Performance Score</label>
+                    <div class="custom-input">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <input type="text" id="performanceScore" placeholder="e.g. 95%" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="accessibilityScore">Accessibility Score</label>
+                    <div class="custom-input">
+                        <i class="fas fa-universal-access"></i>
+                        <input type="text" id="accessibilityScore" placeholder="e.g. 98%" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="seoScore">SEO Score</label>
+                    <div class="custom-input">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="seoScore" placeholder="e.g. 90%" required>
+                    </div>
+                </div>
+            </div>
 
-.custom-input input:focus,
-.custom-input textarea:focus {
-    border-color: #f39c12;
-    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
-    outline: none;
-}
+            <div class="form-section after-live-started-section" style="display: none;">
+                <h3>Live Testing Overview</h3>
+                <div class="form-group">
+                    <label for="websiteName">Website Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="websiteName" placeholder="e.g. Life Smoothies" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendName">Backend Name</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="text" id="backendName" placeholder="e.g. Admin Panel" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="frontendUrl">Frontend URL</label>
+                    <div class="custom-input">
+                        <i class="fas fa-globe"></i>
+                        <input type="url" id="frontendUrl" placeholder="e.g. https://www.lifesmoothies.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backendUrl">Backend URL</label>
+                    <div class="custom-input">
+                        <i class="fas fa-server"></i>
+                        <input type="url" id="backendUrl" placeholder="e.g. https://admin.lifesmoothies.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="custom-input">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="e.g. admin" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="custom-input">
+                        <i class="fas fa-lock"></i>
+                        <input type="text" id="password" placeholder="e.g. P@ssw0rd!" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="deploymentDate">Deployment Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-rocket"></i>
+                        <input type="date" id="deploymentDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Live Testing Start Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="startDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dueDate">Live Testing End Date</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-check"></i>
+                        <input type="date" id="dueDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="plannedDays">Planned Testing Duration (days)</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-week"></i>
+                        <input type="number" id="plannedDays" placeholder="e.g. 5" min="1" required>
+                    </div>
+                </div>
+                
+                <h3>Browsers to be Tested</h3>
+                <div class="form-group">
+                    <label for="browser1">Browser 1</label>
+                    <div class="custom-input">
+                        <i class="fas fa-chrome"></i>
+                        <input type="text" id="browser1" placeholder="e.g. Chrome" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="browser2">Browser 2</label>
+                    <div class="custom-input">
+                        <i class="fas fa-firefox"></i>
+                        <input type="text" id="browser2" placeholder="e.g. Firefox" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="browser3">Browser 3</label>
+                    <div class="custom-input">
+                        <i class="fas fa-safari"></i>
+                        <input type="text" id="browser3" placeholder="e.g. Safari" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="browser4">Browser 4</label>
+                    <div class="custom-input">
+                        <i class="fas fa-edge"></i>
+                        <input type="text" id="browser4" placeholder="e.g. Edge" required>
+                    </div>
+                </div>
+                
+                <h3>Testing Metrics Plan</h3>
+                <div class="form-group">
+                    <label for="plannedTestCases">Total Test Cases Planned</label>
+                    <div class="custom-input">
+                        <i class="fas fa-tasks"></i>
+                        <input type="number" id="plannedTestCases" placeholder="e.g. 120" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="traceabilityGoal">Traceability Percentage Goal</label>
+                    <div class="custom-input">
+                        <i class="fas fa-percentage"></i>
+                        <input type="number" id="traceabilityGoal" placeholder="e.g. 100" min="0" max="100" required>
+                    </div>
+                </div>
+                
+                <h3>Pre-Live Testing Summary</h3>
+                <div class="form-group">
+                    <label for="totalIssuesResolved">Total Issues Resolved Pre-Live</label>
+                    <div class="custom-input">
+                        <i class="fas fa-clipboard-check"></i>
+                        <input type="number" id="totalIssuesResolved" placeholder="e.g. 90" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bugsFixed">Bugs Fixed Pre-Live</label>
+                    <div class="custom-input">
+                        <i class="fas fa-bug"></i>
+                        <input type="number" id="bugsFixed" placeholder="e.g. 25" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="previousBugReportLink">Previous Bug Report Link</label>
+                    <div class="custom-input">
+                        <i class="fas fa-link"></i>
+                        <input type="url" id="previousBugReportLink" placeholder="e.g. https://gitlab.com/.../previous-report" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                        <label for="bugCount">Bugs</label>
+                        <div class="custom-input">
+                            <i class="fas fa-bug"></i>
+                            <input type="number" id="bugCount" placeholder="e.g. 5" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="deviationCount">Deviations</label>
+                        <div class="custom-input">
+                            <i class="fas fa-arrows-alt"></i>
+                            <input type="number" id="deviationCount" placeholder="e.g. 7" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionCount">Suggestions</label>
+                        <div class="custom-input">
+                            <i class="fas fa-lightbulb"></i>
+                            <input type="number" id="suggestionCount" placeholder="e.g. 3" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="correctionCount">Corrections</label>
+                        <div class="custom-input">
+                            <i class="fas fa-check"></i>
+                            <input type="number" id="correctionCount" placeholder="e.g. 2" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="htmlCount">HTML Issues</label>
+                        <div class="custom-input">
+                            <i class="fas fa-code"></i>
+                            <input type="number" id="htmlCount" placeholder="e.g. 6" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="performanceCount">Performance Issues</label>
+                        <div class="custom-input">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <input type="number" id="performanceCount" placeholder="e.g. 4" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-input, textarea, select {
-    width: 100%;
-    padding: 0.6rem 0.8rem 0.6rem 2.5rem;
-    background-color: var(--darker-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    transition: all 0.3s ease;
-}
+            <!-- Sick Leave Section -->
+            <div class="form-section sick-leave-section" style="display: none;">
+                <h3>Sick Leave Details</h3>
+                <div class="form-group">
+                    <label for="managerName">Manager's Name:</label>
+                    <input type="text" id="managerName" placeholder="Enter manager's name" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaveStartDate">Start Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="leaveStartDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leaveEndDate">End Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="leaveEndDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leaveDuration">Duration (days):</label>
+                    <input type="number" id="leaveDuration" placeholder="Enter leave duration in days" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaveReason">Reason for Leave:</label>
+                    <textarea id="leaveReason" placeholder="Enter reason for sick leave" rows="3" required></textarea>
+                </div>
+                
+                <h3>Work Delegation</h3>
+                <div class="form-group">
+                    <label for="delegatedTask1">Task 1:</label>
+                    <input type="text" id="delegatedTask1" placeholder="Enter task description">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedPerson1">Delegated to:</label>
+                    <input type="text" id="delegatedPerson1" placeholder="Enter colleague's name">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedTask2">Task 2:</label>
+                    <input type="text" id="delegatedTask2" placeholder="Enter task description">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedPerson2">Delegated to:</label>
+                    <input type="text" id="delegatedPerson2" placeholder="Enter colleague's name">
+                </div>
+                
+                <h3>Contact Information</h3>
+                <div class="form-group">
+                    <label for="contactMethod">Contact Method:</label>
+                    <input type="text" id="contactMethod" placeholder="Enter contact method (e.g., phone, email)">
+                </div>
+                <div class="form-group">
+                    <label for="contactDetails">Contact Details:</label>
+                    <input type="text" id="contactDetails" placeholder="Enter your contact details">
+                </div>
+                <div class="form-group">
+                    <label for="medicalCertificate">Medical Certificate:</label>
+                    <select id="medicalCertificate">
+                        <option value="true">Yes, Attached</option>
+                        <option value="false" selected>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="senderPosition">Your Position:</label>
+                    <input type="text" id="senderPosition" placeholder="Enter your position">
+                </div>
+                <div class="form-group">
+                    <label for="senderContact">Your Contact Information:</label>
+                    <input type="text" id="senderContact" placeholder="Enter your contact information">
+                </div>
+            </div>
 
-input::placeholder, textarea::placeholder {
-    color: var(--secondary-color);
-    opacity: 0.4;
-    font-size: 0.8rem;
-    font-style: italic;
-}
+            <!-- Casual Leave Section -->
+            <div class="form-section casual-leave-section" style="display: none;">
+                <h3>Casual Leave Details</h3>
+                <div class="form-group">
+                    <label for="managerName">Manager's Name:</label>
+                    <input type="text" id="managerName" placeholder="Enter manager's name" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaveStartDate">Start Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="leaveStartDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leaveEndDate">End Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="leaveEndDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leaveDuration">Duration (days):</label>
+                    <input type="number" id="leaveDuration" placeholder="Enter leave duration in days" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaveReason">Reason for Leave:</label>
+                    <textarea id="leaveReason" placeholder="Enter reason for casual leave" rows="3" required></textarea>
+                </div>
+                
+                <h3>Work Delegation</h3>
+                <div class="form-group">
+                    <label for="delegatedTask1">Task 1:</label>
+                    <input type="text" id="delegatedTask1" placeholder="Enter task description">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedPerson1">Delegated to:</label>
+                    <input type="text" id="delegatedPerson1" placeholder="Enter colleague's name">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedTask2">Task 2:</label>
+                    <input type="text" id="delegatedTask2" placeholder="Enter task description">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedPerson2">Delegated to:</label>
+                    <input type="text" id="delegatedPerson2" placeholder="Enter colleague's name">
+                </div>
+                
+                <h3>Contact Information</h3>
+                <div class="form-group">
+                    <label for="contactMethod">Contact Method:</label>
+                    <input type="text" id="contactMethod" placeholder="Enter contact method (e.g., phone, email)">
+                </div>
+                <div class="form-group">
+                    <label for="contactDetails">Contact Details:</label>
+                    <input type="text" id="contactDetails" placeholder="Enter your contact details">
+                </div>
+                <div class="form-group">
+                    <label for="senderPosition">Your Position:</label>
+                    <input type="text" id="senderPosition" placeholder="Enter your position">
+                </div>
+                <div class="form-group">
+                    <label for="senderContact">Your Contact Information:</label>
+                    <input type="text" id="senderContact" placeholder="Enter your contact information">
+                </div>
+            </div>
 
-input:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 10px rgba(251, 212, 2, 0.1);
-}
-
-input:hover, textarea:hover, select:hover {
-    border-color: var(--secondary-color);
-}
-
-/* Make form sections more compact on larger screens */
-@media (min-width: 768px) {
-    .form-group {
-        max-width: 100%;
-    }
+            <!-- Unpaid Leave Section -->
+            <div class="form-section unpaid-leave-section" style="display: none;">
+                <h3>Unpaid Leave Details</h3>
+                <div class="form-group">
+                    <label for="managerName">Manager's Name:</label>
+                    <input type="text" id="managerName" placeholder="Enter manager's name" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaveStartDate">Start Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="leaveStartDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leaveEndDate">End Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="leaveEndDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leaveDuration">Duration (days):</label>
+                    <input type="number" id="leaveDuration" placeholder="Enter leave duration in days" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaveReason">Reason for Leave:</label>
+                    <textarea id="leaveReason" placeholder="Enter reason for unpaid leave" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="returnDate">Return to Work Date:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="returnDate">
+                    </div>
+                </div>
+                
+                <h3>Work Delegation</h3>
+                <div class="form-group">
+                    <label for="delegatedTask1">Task 1:</label>
+                    <input type="text" id="delegatedTask1" placeholder="Enter task description">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedPerson1">Delegated to:</label>
+                    <input type="text" id="delegatedPerson1" placeholder="Enter colleague's name">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedTask2">Task 2:</label>
+                    <input type="text" id="delegatedTask2" placeholder="Enter task description">
+                </div>
+                <div class="form-group">
+                    <label for="delegatedPerson2">Delegated to:</label>
+                    <input type="text" id="delegatedPerson2" placeholder="Enter colleague's name">
+                </div>
+                
+                <h3>Contact Information</h3>
+                <div class="form-group">
+                    <label for="contactMethod">Contact Method:</label>
+                    <input type="text" id="contactMethod" placeholder="Enter contact method (e.g., phone, email)">
+                </div>
+                <div class="form-group">
+                    <label for="contactDetails">Contact Details:</label>
+                    <input type="text" id="contactDetails" placeholder="Enter your contact details">
+                </div>
+                <div class="form-group">
+                    <label for="senderPosition">Your Position:</label>
+                    <input type="text" id="senderPosition" placeholder="Enter your position">
+                </div>
+                <div class="form-group">
+                    <label for="senderContact">Your Contact Information:</label>
+                    <input type="text" id="senderContact" placeholder="Enter your contact information">
+                </div>
+            </div>
+        </main>
+    </div>
     
-    .template-form {
-        padding: 2.5rem;
-    }
+    <!-- Fixed Footer with Generate Email Button -->
+    <div class="fixed-footer">
+        <button id="generateEmailFixed" class="primary-btn">
+            <i class="fas fa-envelope"></i> Generate Email
+        </button>
+    </div>
     
-    .form-section {
-        padding: 1.2rem;
-    }
-}
-
-/* Password field styling */
-input[type="password"] {
-    letter-spacing: 2px;
-}
-
-/* Number input styling */
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-/* URL input styling */
-input[type="url"] {
-    font-family: monospace;
-}
-
-/* Form validation styling - remove red border */
-input:invalid {
-    border-color: var(--border-color);
-}
-
-input:invalid:focus {
-    box-shadow: 0 0 10px rgba(249, 196, 47, 0.2);
-}
-
-/* Email preview styling */
-.email-preview {
-    background-color: var(--darker-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    white-space: pre-wrap;
-    font-family: monospace;
-    min-height: 300px;
-    color: var(--text-color);
-    border: 2px solid var(--border-color);
-    line-height: 1.8;
-    overflow-y: auto;
-}
-
-/* Scrollbar styling for email preview */
-.email-preview::-webkit-scrollbar {
-    width: 8px;
-}
-
-.email-preview::-webkit-scrollbar-track {
-    background: var(--dark-bg);
-}
-
-.email-preview::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: 4px;
-}
-
-.email-preview::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
-}
-
-.button-group {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    justify-content: center;
-}
-
-.primary-btn, .secondary-btn {
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
-
-.primary-btn {
-    background-color: var(--primary-color);
-    color: var(--dark-bg);
-}
-
-.primary-btn:hover {
-    background-color: #e6c102;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(251, 212, 2, 0.3);
-}
-
-.secondary-btn {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-}
-
-.secondary-btn:hover {
-    background-color: #6c6c6c;
-    transform: translateY(-2px);
-}
-
-.secondary-btn:disabled {
-    background-color: #4a4a4a;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.preview-section {
-    background-color: var(--darker-bg);
-    padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-color);
-}
-
-/* Fixed Footer */
-.fixed-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px;
-    background-color: #121212;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--darker-bg);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
-}
-
-/* Dependencies section */
-.dependencies-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.dependency-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.dependency-item input {
-    flex: 1;
-}
-
-.add-dependency-btn {
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    cursor: pointer;
-    padding: 0.3rem;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.add-dependency-btn:hover {
-    opacity: 1;
-}
-
-.remove-dependency-btn {
-    background: none;
-    border: none;
-    color: #ff4444;
-    cursor: pointer;
-    padding: 0.3rem;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.remove-dependency-btn:hover {
-    opacity: 1;
-}
-
-/* Date input styling */
-input[type="date"] {
-    background-color: var(--darker-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    border-radius: 6px;
-    padding: 0.6rem 0.8rem 0.6rem 2.5rem;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    opacity: 0.7;
-    cursor: pointer;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-    opacity: 1;
-}
-
-/* Make all buttons consistent with theme */
-button, 
-.template-btn,
-.primary-btn,
-.secondary-btn {
-    background-color: var(--dark-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-button:hover, 
-.template-btn:hover,
-.primary-btn:hover {
-    background-color: var(--primary-color);
-    color: var(--darker-bg);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(249, 196, 47, 0.3);
-}
-
-.template-btn.selected {
-    background-color: var(--primary-color);
-    color: var(--darker-bg);
-    font-weight: 600;
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 8px rgba(249, 196, 47, 0.3);
-}
-
-/* Main content area */
-main {
-    padding-bottom: 120px; /* Add space for the fixed footer */
-    min-height: calc(100vh - 250px); /* Ensure minimum height to prevent footer overlap */
-    margin-bottom: 80px; /* Add extra margin at the bottom */
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-        padding-bottom: 200px; /* Keep consistent padding on mobile */
-    }
+    <!-- Hidden button for original JavaScript to work with -->
+    <button type="button" id="generateEmail" style="display: none;"></button>
     
-    main {
-        margin-bottom: 100px; /* Increased margin for mobile */
-    }
+    <script src="script.js"></script>
     
-    .form-container {
-        padding: 0;
-    }
-    
-    .template-form {
-        padding: 1rem;
-    }
-    
-    .form-section {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-    
-    .custom-input input,
-    .custom-input textarea {
-        padding: 10px 15px 10px 40px;
-    }
-}
-
-/* Ensure proper spacing for the last section */
-.form-section:last-of-type {
-    margin-bottom: 50px;
-}
-
-/* Clear any floating elements */
-.form-container::after {
-    content: '';
-    display: table;
-    clear: both;
-} 
+    <!-- Debug Script -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check if template form and sections are present
+            console.log('Debug: Form container present:', !!document.querySelector('.form-container'));
+            console.log('Debug: Template form present:', !!document.querySelector('.template-form'));
+            console.log('Debug: Basic info section present:', !!document.querySelector('.basic-info-section'));
+            console.log('Debug: Dates section present:', !!document.querySelector('.dates-section'));
+            console.log('Debug: URLs section present:', !!document.querySelector('.urls-section'));
+            
+            // Check if template buttons work
+            const debugButtons = document.querySelectorAll('.template-btn');
+            console.log('Debug: Number of template buttons:', debugButtons.length);
+            
+            // Add test click to first button if available
+            if (debugButtons.length > 0) {
+                setTimeout(() => {
+                    console.log('Debug: Attempting to click first template button...');
+                    debugButtons[0].click();
+                    console.log('Debug: Basic info section visible:', document.querySelector('.basic-info-section').style.display !== 'none');
+                    console.log('Debug: Dates section visible:', document.querySelector('.dates-section').style.display !== 'none');
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html> 
+</html> 
