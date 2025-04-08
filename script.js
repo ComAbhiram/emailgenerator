@@ -122,7 +122,35 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Store selected template
             selectedTemplate = template;
+
+            // Scroll to the first visible form field
+            setTimeout(() => {
+                const firstVisibleInput = document.querySelector('.form-section[style*="display: block"] input, .form-section[style*="display: block"] textarea');
+                if (firstVisibleInput) {
+                    firstVisibleInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstVisibleInput.focus();
+                }
+            }, 100);
         });
+    });
+
+    // Add keyboard navigation between form fields
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const currentField = document.activeElement;
+            if (currentField && (currentField.tagName === 'INPUT' || currentField.tagName === 'TEXTAREA')) {
+                const allFields = Array.from(document.querySelectorAll('input, textarea'));
+                const currentIndex = allFields.indexOf(currentField);
+                if (currentIndex !== -1 && currentIndex < allFields.length - 1) {
+                    const nextField = allFields[currentIndex + 1];
+                    if (nextField && nextField.offsetParent !== null) { // Check if field is visible
+                        nextField.focus();
+                        nextField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+        }
     });
 
     // Initialize with common section visible
