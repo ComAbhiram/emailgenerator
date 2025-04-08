@@ -240,11 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.device1 = document.getElementById('device1').value;
             formData.device2 = document.getElementById('device2').value;
             formData.device3 = document.getElementById('device3').value;
-
-            // Get dependencies
-            formData.dependencies = Array.from(document.querySelectorAll('.dependency-input'))
-                .map(input => input.value)
-                .filter(value => value.trim() !== '');
+            formData.testDocName = document.getElementById('testDocName').value;
+            formData.pcName = document.getElementById('pcName').value;
+            formData.teamLeadName = document.getElementById('teamLeadName').value;
+            formData.approvalDeadline = document.getElementById('approvalDeadline').value;
         } else if (selectedTemplate === 'dev-testing-completed') {
             formData.websiteName = document.getElementById('websiteName').value;
             formData.backendName = document.getElementById('backendName').value;
@@ -608,8 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             `Username: ${formatValue(formData.username)}\n` +
                             `Password: ${formatValue(formData.password)}\n` +
                             `GitLab Bug Tracker: ${formatValue(formData.gitlabUrl)}\n\n` +
-                            `Pending Dependencies:\n` +
-                            formatDependencies(formData) + '\n\n' +
                             `Testing Method: Manual Testing\n` +
                             `Testing Tools: Chrome Dev Tools, Postman\n\n` +
                             `Browsers Covered:\n` +
