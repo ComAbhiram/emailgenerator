@@ -1,689 +1,824 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const wheelSegments = document.querySelectorAll('.wheel-segment');
     const templateButtons = document.querySelectorAll('.template-btn');
-    const templateForm = document.getElementById('emailForm');
+    const modal = document.getElementById('popupModal');
+    const closeModal = document.querySelector('.close-btn');
+    const popupFormContent = document.getElementById('popupFormContent');
+    const popupForm = document.getElementById('popupForm');
+    const previewSection = document.querySelector('.preview-section');
     const emailPreview = document.getElementById('emailPreview');
-    const previewSection = document.getElementById('previewSection');
-    const copyEmailBtn = document.getElementById('copyEmailBtn');
-    
-    // Initialize form sections with error handling
-    const formSections = {
-        'common': document.querySelector('.basic-info-section'),
-        'urls': document.querySelector('.urls-section'),
-        'credentials': document.querySelector('.credentials-section'),
-        'devices': document.querySelector('.devices-section'),
-        'dates': document.querySelector('.dates-section'),
-        'devTestingStarted': document.querySelector('.dev-testing-started-section'),
-        'devTestingRejected': document.querySelector('.dev-testing-rejected-section'),
-        'devRetesting': document.querySelector('.dev-retesting-section'),
-        'devRetestingRejected': document.querySelector('.dev-retesting-rejected-section'),
-        'devRetestingCompleted': document.querySelector('.dev-retesting-completed-section'),
-        'beforeLiveStarted': document.querySelector('.before-live-started-section'),
-        'beforeLiveRejected': document.querySelector('.before-live-rejected-section'),
-        'beforeLiveApprovedWithBugs': document.querySelector('.before-live-approved-with-bugs-section'),
-        'beforeLiveApproval': document.querySelector('.before-live-approval-section'),
-        'afterLiveStarted': document.querySelector('.after-live-started-section'),
-        'afterLiveCompleted': document.querySelector('.after-live-completed-section'),
-        'toolsBrowsers': document.querySelector('.tools-browsers-section'),
-        'workingDays': document.querySelector('.working-days-section'),
-        'issueStats': document.querySelector('.issue-stats-section')
-    };
-
-    // Debug log for form sections
-    console.log('Form sections:', Object.entries(formSections).map(([key, value]) => ({
-        section: key,
-        exists: value !== null
-    })));
+    const copyEmailButton = document.getElementById('copyEmail');
+    const backToFormButton = document.getElementById('backToForm');
+    const adminTemplateSection = document.getElementById('adminTemplateSection');
+    const addNewTemplateBtn = document.getElementById('addNewTemplateBtn');
+    const editTemplatesBtn = document.getElementById('editTemplatesBtn');
+    const adminTemplateForm = document.getElementById('adminTemplateForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const adminAccessBtn = document.getElementById('adminAccessBtn');
+    const wheel = document.querySelector('.wheel');
 
     let selectedTemplate = null;
+    let formData = null;
+    let editingTemplate = null;
+    let templates = {
+        'dev-testing-started': {
+            fields: [
+                { id: 'projectName', label: 'Project Name', type: 'text', placeholder: 'Enter project name', required: true },
+                { id: 'recipientName', label: 'Recipient\'s Name', type: 'text', placeholder: 'Enter recipient\'s name', required: true },
+                { id: 'frontendUrl', label: 'Frontend URL', type: 'url', placeholder: 'Enter frontend URL', required: true },
+                { id: 'backendUrl', label: 'Backend URL', type: 'url', placeholder: 'Enter backend URL', required: true },
+                { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter login username', required: true },
+                { id: 'password', label: 'Password', type: 'text', placeholder: 'Enter login password', required: true },
+                { id: 'bugTrackerUrl', label: 'Bug Tracker URL', type: 'url', placeholder: 'Enter bug tracker URL', required: true },
+                { id: 'device1', label: 'Device 1 (OS Version)', type: 'text', placeholder: 'Enter device details', required: true },
+                { id: 'device2', label: 'Device 2', type: 'text', placeholder: 'Enter device details', required: false },
+                { id: 'device3', label: 'Device 3', type: 'text', placeholder: 'Enter device details', required: false },
+                { id: 'startDate', label: 'Start Date', type: 'date', placeholder: '', required: true },
+                { id: 'dueDate', label: 'Expected Completion Date', type: 'date', placeholder: '', required: true },
+                { id: 'testDocName', label: 'Test Document Name', type: 'text', placeholder: 'Enter test document name', required: true },
+                { id: 'pcName', label: 'Project Coordinator Name', type: 'text', placeholder: 'Enter project coordinator name', required: true },
+                { id: 'teamLeadName', label: 'Team Lead Name', type: 'text', placeholder: 'Enter team lead name', required: true },
+                { id: 'approvalDeadline', label: 'Approval Deadline', type: 'date', placeholder: '', required: true },
+                { id: 'senderName', label: 'Your Name', type: 'text', placeholder: 'Enter your name', required: true },
+                { id: 'testDocLink', label: 'Test Document Link', type: 'url', placeholder: 'Enter test document link', required: false }
+            ],
+            content: `
+Dear {recipientName},
 
-    // Hide all form sections initially
-    function hideAllSections() {
-        Object.entries(formSections).forEach(([name, section]) => {
-            if (section) {
-                section.style.display = 'none';
-                console.log(`Hiding section: ${name}`);
-            } else {
-                console.warn(`Section not found: ${name}`);
-            }
-        });
-    }
+I’m writing to inform you that development testing has officially commenced for {projectName}. Please find the testing details below for your reference:
 
-    // Show specified sections
-    function showSections(sectionNames) {
-        console.log('Showing sections:', sectionNames);
-        hideAllSections();
-        sectionNames.forEach(name => {
-            const section = formSections[name];
-            if (section) {
-                section.style.display = 'block';
-                console.log(`Showing section: ${name}`);
-            } else {
-                console.warn(`Section not found: ${name}`);
-            }
-        });
-    }
+### Testing Overview
+- Frontend URL: {frontendUrl}
+- Backend URL: {backendUrl}
+- Username: {username}
+- Password: {password}
 
-    // Template button click handler
+### Testing Approach
+- Method: Manual + Automation
+- Tools in Use:
+  - Selenium – Functional Validations
+  - Burp Suite – Security Testing
+  - Axe – Accessibility Checks
+  - JAM – Session Recording
+  - Screaming Frog – SEO Analysis
+  - GitLab – Bug Tracking ({bugTrackerUrl})
+
+### Browsers & Devices
+- Browsers Covered: Safari, Chrome, Brave, Firefox
+- Devices Used:
+  - {device1}
+  - {device2 || 'N/A'}
+  - {device3 || 'N/A'}
+
+### Testing Timeline
+- Start Date: {startDate}
+- Expected Completion: {dueDate}
+
+### Test Documentation
+Please review the attached test plan – {testDocName}.doc – which outlines the scope, test cases, and methodologies for this testing phase.
+Kindly request the Project Coordinator ({pcName}) and Team Lead ({teamLeadName}) to review and approve the document before testing proceeds. We request that approval be shared with the team no later than {approvalDeadline}.
+
+If you have any questions or require further details, feel free to reach out.
+
+Best regards,
+{senderName}
+
+Test Document Link: {testDocLink}
+            `,
+            icon: 'fas fa-rocket'
+        },
+        'dev-testing-rejected': {
+            fields: [
+                { id: 'recipientName', label: 'Recipient\'s Name', type: 'text', placeholder: 'Enter recipient\'s name', required: true },
+                { id: 'projectName', label: 'Project Name', type: 'text', placeholder: 'Enter project name', required: true },
+                { id: 'websiteName', label: 'Website Name', type: 'text', placeholder: 'Enter website name', required: true },
+                { id: 'backendName', label: 'Backend Name', type: 'text', placeholder: 'Enter backend name', required: true },
+                { id: 'frontendUrl', label: 'Frontend URL', type: 'url', placeholder: 'Enter frontend URL', required: true },
+                { id: 'backendUrl', label: 'Backend URL', type: 'url', placeholder: 'Enter backend URL', required: true },
+                { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter login username', required: true },
+                { id: 'password', label: 'Password', type: 'text', placeholder: 'Enter login password', required: true },
+                { id: 'criticalBugs', label: 'Critical Bugs', type: 'number', placeholder: 'Enter number of critical bugs', required: true },
+                { id: 'startDate', label: 'Start Date', type: 'date', placeholder: '', required: true },
+                { id: 'endDate', label: 'End Date', type: 'date', placeholder: '', required: true },
+                { id: 'totalIssues', label: 'Total Issues', type: 'number', placeholder: 'Enter total issues reviewed', required: true },
+                { id: 'bugsCount', label: 'Bugs Count', type: 'number', placeholder: 'Enter total bugs identified', required: true },
+                { id: 'bugtrackerUrl', label: 'Bug Tracker URL', type: 'url', placeholder: 'Enter bug tracker URL', required: true },
+                { id: 'newBugs', label: 'New Bugs', type: 'number', placeholder: 'Enter number of new bugs', required: true },
+                { id: 'viewNewBugsLink', label: 'View New Bugs Link', type: 'url', placeholder: 'Enter link to view new bugs', required: true },
+                { id: 'viewCriticalBugsLink', label: 'View Critical Bugs Link', type: 'url', placeholder: 'Enter link to view critical bugs', required: true },
+                { id: 'otherBugs', label: 'Other Bugs', type: 'number', placeholder: 'Enter number of other bugs', required: true },
+                { id: 'viewOtherBugsLink', label: 'View Other Bugs Link', type: 'url', placeholder: 'Enter link to view other bugs', required: true },
+                { id: 'viewAllIssuesLink', label: 'View All Issues Link', type: 'url', placeholder: 'Enter link to view all issues', required: true },
+                { id: 'browser1', label: 'Browser 1', type: 'text', placeholder: 'Enter first browser', required: true },
+                { id: 'browser2', label: 'Browser 2', type: 'text', placeholder: 'Enter second browser', required: false },
+                { id: 'browser3', label: 'Browser 3', type: 'text', placeholder: 'Enter third browser', required: false },
+                { id: 'browser4', label: 'Browser 4', type: 'text', placeholder: 'Enter fourth browser', required: false },
+                { id: 'device1', label: 'Device 1', type: 'text', placeholder: 'Enter first device', required: true },
+                { id: 'device2', label: 'Device 2', type: 'text', placeholder: 'Enter second device', required: false },
+                { id: 'device3', label: 'Device 3', type: 'text', placeholder: 'Enter third device', required: false },
+                { id: 'osVersion', label: 'OS Version', type: 'text', placeholder: 'Enter OS version', required: false },
+                { id: 'yourName', label: 'Your Name', type: 'text', placeholder: 'Enter your name', required: true }
+            ],
+            content: `
+Subject: Dev Testing Rejected for {projectName}
+
+Dear {recipientName},
+
+I regret to inform you that the Dev testing phase for {projectName} has been rejected due to the identification of multiple critical bugs. Please find the details below for your reference:
+
+🧪 Testing Details:
+Website: {websiteName}
+Backend: {backendName}
+Frontend URL: {frontendUrl}
+Backend URL: {backendUrl}
+Username: {username}
+Password: {password}
+
+❌ Reason for Rejection:
+During the testing phase, {criticalBugs} critical bugs were identified, which pose significant risks to functionality, security, or performance. These issues prevent the current phase from being approved.
+
+📋 Testing Summary:
+Start Date: {startDate}
+End Date: {endDate}
+Total Issues Reviewed: {totalIssues}
+Total Bugs Identified: {bugsCount}
+Critical Bugs: {criticalBugs}
+Bug Tracker: {bugtrackerUrl}
+
+🐞 Issues Breakdown:
+Category | Count | Details
+---------|-------|--------
+Total Issues | {totalIssues} | {viewAllIssuesLink}
+New Bugs | {newBugs} | {viewNewBugsLink}
+Critical Bugs | {criticalBugs} | {viewCriticalBugsLink}
+Other Bugs | {otherBugs} | {viewOtherBugsLink}
+
+🧰 Testing Method & Tools:
+Method: Manual + Automation
+Tools Used:
+- Selenium – Bug Validation
+- Burp Suite – Security Testing
+- Axe – Accessibility Checks
+- JAM – Bug Recording
+- Screaming Frog – SEO Analysis
+- GitLab (Bug Tracker): {bugtrackerUrl}
+
+🌐 Browsers Covered:
+{browser1}, {browser2 || 'N/A'}, {browser3 || 'N/A'}, {browser4 || 'N/A'}
+
+💻 Devices Used:
+{device1} ({osVersion || 'N/A'})
+{device2 || 'N/A'}
+{device3 || 'N/A'}
+
+🚀 Next Steps:
+The development team is requested to prioritize and resolve the {criticalBugs} critical bugs. A revised testing phase will be scheduled once these issues are addressed and verified.
+
+Please review the detailed bug report at {bugtrackerUrl} and let me know if you need any further clarification or support.
+
+Best regards,
+{yourName}
+            `,
+            icon: 'fas fa-ban'
+        },
+        'dev-retesting-rejected': {
+            fields: [],
+            content: 'Default content for dev-retesting-rejected',
+            icon: 'fas fa-times-circle'
+        },
+        'dev-retesting-completed': {
+            fields: [],
+            content: 'Default content for dev-retesting-completed',
+            icon: 'fas fa-check-circle'
+        },
+        'html-comparison-started': {
+            fields: [],
+            content: 'Default content for html-comparison-started',
+            icon: 'fas fa-code'
+        },
+        'html-comparison-completed': {
+            fields: [],
+            content: 'Default content for html-comparison-completed',
+            icon: 'fas fa-check-double'
+        },
+        'before-live-started': {
+            fields: [],
+            content: 'Default content for before-live-started',
+            icon: 'fas fa-hourglass-start'
+        },
+        'before-live-approved-with-bugs': {
+            fields: [],
+            content: 'Default content for before-live-approved-with-bugs',
+            icon: 'fas fa-exclamation-triangle'
+        },
+        'before-live-approval': {
+            fields: [],
+            content: 'Default content for before-live-approval',
+            icon: 'fas fa-award'
+        },
+        'before-live-rejected': {
+            fields: [],
+            content: 'Default content for before-live-rejected',
+            icon: 'fas fa-ban'
+        },
+        'after-live-started': {
+            fields: [],
+            content: 'Default content for after-live-started',
+            icon: 'fas fa-globe'
+        },
+        'after-live-completed': {
+            fields: [],
+            content: 'Default content for after-live-completed',
+            icon: 'fas fa-check-circle'
+        },
+        'sick-leave': {
+            fields: [],
+            content: 'Default content for sick-leave',
+            icon: 'fas fa-medkit'
+        },
+        'casual-leave': {
+            fields: [],
+            content: 'Default content for casual-leave',
+            icon: 'fas fa-umbrella-beach'
+        },
+        'unpaid-leave': {
+            fields: [],
+            content: 'Default content for unpaid-leave',
+            icon: 'fas fa-wallet'
+        },
+        'dev-retesting-started': {
+            fields: [
+                { id: 'recipientName', label: 'Recipient\'s Name', type: 'text', placeholder: 'Enter recipient\'s name', required: true },
+                { id: 'projectName', label: 'Project Name', type: 'text', placeholder: 'Enter project name', required: true },
+                { id: 'websiteName', label: 'Website Name', type: 'text', placeholder: 'Enter website name', required: true },
+                { id: 'backendName', label: 'Backend Name', type: 'text', placeholder: 'Enter backend name', required: true },
+                { id: 'frontendUrl', label: 'Frontend URL', type: 'url', placeholder: 'Enter frontend URL', required: true },
+                { id: 'backendUrl', label: 'Backend URL', type: 'url', placeholder: 'Enter backend URL', required: true },
+                { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter login username', required: true },
+                { id: 'password', label: 'Password', type: 'text', placeholder: 'Enter login password', required: true },
+                { id: 'totalIssues', label: 'Total Issues', type: 'number', placeholder: 'Enter total issues logged', required: true },
+                { id: 'bugsCount', label: 'Bugs Count', type: 'number', placeholder: 'Enter total bugs logged', required: true },
+                { id: 'bugtrackerUrl', label: 'Bug Tracker URL', type: 'url', placeholder: 'Enter bug tracker URL', required: true },
+                { id: 'browser1', label: 'Browser 1', type: 'text', placeholder: 'Enter first browser', required: true },
+                { id: 'browser2', label: 'Browser 2', type: 'text', placeholder: 'Enter second browser', required: false },
+                { id: 'browser3', label: 'Browser 3', type: 'text', placeholder: 'Enter third browser', required: false },
+                { id: 'browser4', label: 'Browser 4', type: 'text', placeholder: 'Enter fourth browser', required: false },
+                { id: 'device1', label: 'Device 1', type: 'text', placeholder: 'Enter first device', required: true },
+                { id: 'device2', label: 'Device 2', type: 'text', placeholder: 'Enter second device', required: false },
+                { id: 'device3', label: 'Device 3', type: 'text', placeholder: 'Enter third device', required: false },
+                { id: 'osVersion', label: 'OS Version', type: 'text', placeholder: 'Enter OS version', required: false },
+                { id: 'startDate', label: 'Start Date', type: 'date', placeholder: '', required: true },
+                { id: 'dueDate', label: 'Due Date', type: 'date', placeholder: '', required: true },
+                { id: 'previousBugReportLink', label: 'Previous Bug Report Link', type: 'url', placeholder: 'Enter link to previous bug report', required: true },
+                { id: 'yourName', label: 'Your Name', type: 'text', placeholder: 'Enter your name', required: true }
+            ],
+            content: `
+Subject: Dev Retesting Started for {projectName}
+
+Dear {recipientName},
+
+I am pleased to inform you that the retesting phase for {projectName} has started. This phase focuses on verifying fixes for previously identified issues and ensuring stability across the application. Please find the details below for your reference:
+
+🧪 Testing Details:
+Website: {websiteName}
+Backend: {backendName}
+Frontend URL: {frontendUrl}
+Backend URL: {backendUrl}
+Username: {username}
+Password: {password}
+
+🔍 Scope of Retesting:
+- Verification of fixes for {totalIssues} previously logged issues
+- Retesting of {bugsCount} bugs
+- Validation of UI and functionality changes
+- Cross-browser and device compatibility
+- Performance improvements
+- Security and SEO rechecks
+
+🧰 Testing Method & Tools:
+Method: Manual + Automation
+Tools:
+- Selenium – Validation of fixes
+- Burp Suite – Security retesting
+- Axe – Accessibility revalidation
+- JAM – Bug recording
+- Screaming Frog – SEO reanalysis
+- GitLab (Bug Tracker): {bugtrackerUrl}
+
+🌐 Browsers Covered:
+{browser1}, {browser2 || 'N/A'}, {browser3 || 'N/A'}, {browser4 || 'N/A'}
+
+💻 Devices Used:
+{device1} ({osVersion || 'N/A'})
+{device2 || 'N/A'}
+{device3 || 'N/A'}
+
+📅 Timeline:
+Start Date: {startDate}
+Expected Due Date: {dueDate}
+
+📊 Previous Testing Summary:
+- Total Issues Logged: {totalIssues}
+- Bugs Logged: {bugsCount}
+- Link to Previous Bug Report: {previousBugReportLink}
+
+Please feel free to reach out if you have any questions or require additional details.
+
+Best regards,
+{yourName}
+            `,
+            icon: 'fas fa-redo'
+        },
+        'dev-retesting-phase-rejected': {
+            fields: [
+                { id: 'recipientName', label: 'Recipient\'s Name', type: 'text', placeholder: 'Enter recipient\'s name', required: true },
+                { id: 'projectName', label: 'Project Name', type: 'text', placeholder: 'Enter project name', required: true },
+                { id: 'websiteName', label: 'Website Name', type: 'text', placeholder: 'Enter website name', required: true },
+                { id: 'backendName', label: 'Backend Name', type: 'text', placeholder: 'Enter backend name', required: true },
+                { id: 'frontendUrl', label: 'Frontend URL', type: 'url', placeholder: 'Enter frontend URL', required: true },
+                { id: 'backendUrl', label: 'Backend URL', type: 'url', placeholder: 'Enter backend URL', required: true },
+                { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter username', required: true },
+                { id: 'password', label: 'Password', type: 'text', placeholder: 'Enter password', required: true },
+                { id: 'totalReopenedBugs', label: 'Total Reopened Bugs', type: 'number', placeholder: 'Enter total reopened bugs', required: true },
+                { id: 'startDate', label: 'Start Date', type: 'date', placeholder: '', required: true },
+                { id: 'endDate', label: 'End Date', type: 'date', placeholder: '', required: true },
+                { id: 'totalIssues', label: 'Total Issues', type: 'number', placeholder: 'Enter total issues reviewed', required: true },
+                { id: 'bugsCount', label: 'Bugs Count', type: 'number', placeholder: 'Enter total bugs identified', required: true },
+                { id: 'bugtrackerUrl', label: 'Bugtracker URL', type: 'url', placeholder: 'Enter bugtracker URL', required: true },
+                { id: 'previousBugReportLink', label: 'Previous Bug Report Link', type: 'url', placeholder: 'Enter previous bug report link', required: true },
+                { id: 'newBugs', label: 'New Bugs', type: 'number', placeholder: 'Enter new bugs count', required: true },
+                { id: 'viewNewBugsLink', label: 'View New Bugs Link', type: 'url', placeholder: 'Enter link to view new bugs', required: true },
+                { id: 'viewReopenedBugsLink', label: 'View Reopened Bugs Link', type: 'url', placeholder: 'Enter link to view reopened bugs', required: true },
+                { id: 'criticalBugs', label: 'Critical Bugs', type: 'number', placeholder: 'Enter critical bugs count', required: true },
+                { id: 'viewCriticalBugsLink', label: 'View Critical Bugs Link', type: 'url', placeholder: 'Enter link to view critical bugs', required: true },
+                { id: 'viewAllIssuesLink', label: 'View All Issues Link', type: 'url', placeholder: 'Enter link to view all issues', required: true },
+                { id: 'browser1', label: 'Browser 1', type: 'text', placeholder: 'Enter first browser', required: true },
+                { id: 'browser2', label: 'Browser 2', type: 'text', placeholder: 'Enter second browser', required: false },
+                { id: 'browser3', label: 'Browser 3', type: 'text', placeholder: 'Enter third browser', required: false },
+                { id: 'browser4', label: 'Browser 4', type: 'text', placeholder: 'Enter fourth browser', required: false },
+                { id: 'device1', label: 'Device 1', type: 'text', placeholder: 'Enter first device', required: true },
+                { id: 'device2', label: 'Device 2', type: 'text', placeholder: 'Enter second device', required: false },
+                { id: 'device3', label: 'Device 3', type: 'text', placeholder: 'Enter third device', required: false },
+                { id: 'osVersion', label: 'OS Version', type: 'text', placeholder: 'Enter OS version', required: false },
+                { id: 'yourName', label: 'Your Name', type: 'text', placeholder: 'Enter your name', required: true }
+            ],
+            content: `
+Dear {recipientName},
+
+I regret to inform you that the retesting phase for {projectName} has been rejected due to the discovery of multiple reopened bugs. Below are the details for your reference:
+
+### Testing Details:
+- Website: {websiteName}
+- Backend: {backendName}
+- Frontend URL: {frontendUrl}
+- Backend URL: {backendUrl}
+- Username: {username}
+- Password: {password}
+
+### Reason for Rejection:
+During the retesting phase, {totalReopenedBugs} reopened bugs were identified, indicating that previously reported issues remain unresolved. This prevents the phase from being approved.
+
+### Retesting Summary:
+- Start Date: {startDate}
+- End Date: {endDate}
+- Total Issues Reviewed: {totalIssues}
+- Total Bugs Identified: {bugsCount}
+- Reopened Bugs: {totalReopenedBugs}
+- Bugtracker: {bugtrackerUrl}
+- Previous Testing Report: {previousBugReportLink}
+
+### Issues Breakdown:
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Count</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Total Issues</td>
+            <td>{totalIssues}</td>
+            <td><a href="{viewAllIssuesLink}">View All Issues</a></td>
+        </tr>
+        <tr>
+            <td>New Bugs</td>
+            <td>{newBugs}</td>
+            <td><a href="{viewNewBugsLink}">View New Bugs</a></td>
+        </tr>
+        <tr>
+            <td>Reopened Bugs</td>
+            <td>{totalReopenedBugs}</td>
+            <td><a href="{viewReopenedBugsLink}">View Reopened Bugs</a></td>
+        </tr>
+        <tr>
+            <td>Critical Bugs</td>
+            <td>{criticalBugs}</td>
+            <td><a href="{viewCriticalBugsLink}">View Critical Bugs</a></td>
+        </tr>
+    </tbody>
+</table>
+
+### Testing Method:
+Manual + Automation
+
+### Testing Tools:
+- Selenium: Validation of fixes
+- Burp Suite: Security rechecks
+- Axe: Accessibility validation
+- JAM: Bug recording
+- GitLab (Bug Tracker): {bugtrackerUrl}
+- Screaming Frog: SEO revalidation
+
+### Browsers Covered:
+{browser1}, {browser2 || 'N/A'}, {browser3 || 'N/A'}, {browser4 || 'N/A'}
+
+### Devices Used:
+- {device1} ({osVersion || 'N/A'})
+- {device2 || 'N/A'}
+- {device3 || 'N/A'}
+
+### Next Steps:
+The development team is requested to resolve the {totalReopenedBugs} reopened bugs and address any critical issues. A new retesting phase will be scheduled once the fixes are implemented and verified.
+
+Please review the detailed bug report at {bugtrackerUrl} and let me know if you require further details or assistance.
+
+Best regards,  
+{yourName}
+            `,
+            icon: 'fas fa-times-circle'
+        },
+        'assign-task': {
+            fields: [
+                { id: 'recipientName', label: 'Recipient\'s Name', type: 'text', placeholder: 'Enter recipient\'s name', required: true },
+                { id: 'taskDescription', label: 'Task Description', type: 'textarea', placeholder: 'Enter task description', required: true },
+                { id: 'dueDate', label: 'Due Date', type: 'date', placeholder: '', required: true },
+                { id: 'yourName', label: 'Your Name', type: 'text', placeholder: 'Enter your name', required: true }
+            ],
+            content: `
+Subject: New Task Assignment
+
+Dear {recipientName},
+
+You have been assigned a new task. Please find the details below:
+
+**Task Description**: {taskDescription}
+**Due Date**: {dueDate}
+
+Please ensure to complete the task by the specified due date. Feel free to reach out if you have any questions.
+
+Best regards,
+{yourName}
+            `,
+            icon: 'fas fa-tasks'
+        }
+    };
+
+    // Attach event listeners to template buttons
     templateButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const template = button.getAttribute('data-template');
-            console.log('Template selected:', template);
-            
-            // Show form and hide preview
-            if (templateForm) {
-                templateForm.style.display = 'block';
-            }
-            if (previewSection) {
-                previewSection.style.display = 'none';
-            }
-            
-            // Show relevant sections based on template
-            switch(template) {
-                case 'dev-testing-started':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'devTestingStarted', 'toolsBrowsers', 'workingDays']);
-                    break;
-                case 'dev-testing-rejected':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'devTestingRejected', 'issueStats']);
-                    break;
-                case 'dev-retesting-started':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'devRetesting', 'toolsBrowsers', 'workingDays']);
-                    break;
-                case 'dev-retesting-rejected':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'devRetestingRejected', 'issueStats']);
-                    break;
-                case 'dev-retesting-completed':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'devRetestingCompleted', 'issueStats']);
-                    break;
-                case 'before-live-started':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'beforeLiveStarted', 'toolsBrowsers', 'workingDays']);
-                    break;
-                case 'before-live-rejected':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'beforeLiveRejected', 'issueStats']);
-                    break;
-                case 'before-live-approved-with-bugs':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'beforeLiveApprovedWithBugs', 'issueStats']);
-                    break;
-                case 'before-live-approval':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'beforeLiveApproval', 'issueStats']);
-                    break;
-                case 'after-live-started':
-                    showSections(['common', 'urls', 'credentials', 'dates', 'afterLiveStarted', 'toolsBrowsers', 'workingDays']);
-                    break;
-                case 'after-live-completed':
-                    showSections(['common', 'urls', 'credentials', 'devices', 'dates', 'afterLiveCompleted', 'issueStats']);
-                    break;
-                default:
-                    showSections(['common']);
-            }
-            
-            // Update active state of buttons
-            templateButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            
-            // Store selected template
-            selectedTemplate = template;
+            selectedTemplate = button.getAttribute('data-template');
+            templateButtons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
 
-            // Scroll to the first visible form field
-            setTimeout(() => {
-                const firstVisibleInput = document.querySelector('.form-section[style*="display: block"] input, .form-section[style*="display: block"] textarea');
-                if (firstVisibleInput) {
-                    firstVisibleInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstVisibleInput.focus();
-                }
-            }, 100);
+            const fields = templates[selectedTemplate]?.fields || [];
+            generateForm(fields);
+            modalTitle.textContent = 'Template Form';
+            popupForm.style.display = 'block';
+            adminTemplateForm.style.display = 'none';
+            modal.style.display = 'flex';
         });
     });
 
-    // Add keyboard navigation between form fields
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            const currentField = document.activeElement;
-            if (currentField && (currentField.tagName === 'INPUT' || currentField.tagName === 'TEXTAREA')) {
-                const allFields = Array.from(document.querySelectorAll('input, textarea'));
-                const currentIndex = allFields.indexOf(currentField);
-                if (currentIndex !== -1 && currentIndex < allFields.length - 1) {
-                    const nextField = allFields[currentIndex + 1];
-                    if (nextField && nextField.offsetParent !== null) { // Check if field is visible
-                        nextField.focus();
-                        nextField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }
-            }
+    // Handle wheel segment click
+    wheelSegments.forEach(segment => {
+        segment.addEventListener('click', () => {
+            selectedTemplate = segment.getAttribute('data-template');
+            wheelSegments.forEach(seg => seg.classList.remove('selected'));
+            segment.classList.add('selected');
+            const fields = templates[selectedTemplate]?.fields || [];
+            generateForm(fields);
+            modalTitle.textContent = 'Template Form';
+            popupForm.style.display = 'block';
+            adminTemplateForm.style.display = 'none';
+            modal.style.display = 'flex';
+        });
+    });
+
+    // Admin access with password
+    adminAccessBtn.addEventListener('click', () => {
+        const password = prompt('Enter admin password:');
+        if (password === 'Abhihere12') {
+            adminTemplateSection.style.display = 'block';
+        } else {
+            alert('Incorrect password. Access denied.');
         }
     });
 
-    // Initialize with common section visible
-    if (formSections.common) {
-        showSections(['common']);
-    } else {
-        console.error('Common section not found in the DOM');
-    }
-
-    // Handle dependencies
-    addDependencyBtn.addEventListener('click', () => {
-        const newDependency = document.createElement('div');
-        newDependency.className = 'dependency-item';
-        newDependency.innerHTML = `
-            <div class="custom-input">
-                <i class="fas fa-tasks"></i>
-                <input type="text" class="dependency-input" placeholder="Enter dependency">
-            </div>
-            <button type="button" class="remove-dependency-btn">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        dependenciesContainer.appendChild(newDependency);
-
-        // Add remove button handler
-        const removeBtn = newDependency.querySelector('.remove-dependency-btn');
-        removeBtn.addEventListener('click', () => {
-            newDependency.remove();
-        });
+    // Handle add new template
+    addNewTemplateBtn.addEventListener('click', () => {
+        editingTemplate = null;
+        document.getElementById('isEditing').value = 'false';
+        modalTitle.textContent = 'Add New Template';
+        adminTemplateForm.reset();
+        popupForm.style.display = 'none';
+        adminTemplateForm.style.display = 'block';
+        modal.style.display = 'flex';
     });
 
-    // Add remove button handler for initial dependency
-    const initialRemoveBtn = document.querySelector('.remove-dependency-btn');
-    if (initialRemoveBtn) {
-        initialRemoveBtn.addEventListener('click', (e) => {
-            const dependencyItems = document.querySelectorAll('.dependency-item');
-            if (dependencyItems.length > 1) {
-                e.target.closest('.dependency-item').remove();
+    // Handle edit templates
+    editTemplatesBtn.addEventListener('click', () => {
+        const templateSelect = document.createElement('select');
+        templateSelect.id = 'templateSelect';
+        templateSelect.className = 'custom-input';
+        templateSelect.style.width = '100%';
+        templateSelect.style.padding = '14px';
+        templateSelect.style.marginBottom = '15px';
+        templateSelect.innerHTML = '<option value="">Select a template to edit</option>' + Object.keys(templates).map(template => `
+            <option value="${template}">${template.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+        `).join('');
+        const formGroup = document.createElement('div');
+        formGroup.className = 'form-group';
+        formGroup.innerHTML = '<label for="templateSelect">Select Template:</label>';
+        formGroup.appendChild(templateSelect);
+        adminTemplateForm.insertBefore(formGroup, adminTemplateForm.firstChild);
+
+        editingTemplate = null;
+        document.getElementById('isEditing').value = 'false';
+        modalTitle.textContent = 'Edit Template';
+        adminTemplateForm.reset();
+        popupForm.style.display = 'none';
+        adminTemplateForm.style.display = 'block';
+        modal.style.display = 'flex';
+
+        templateSelect.addEventListener('change', () => {
+            const selectedTemplateName = templateSelect.value;
+            if (selectedTemplateName) {
+                editingTemplate = selectedTemplateName;
+                document.getElementById('isEditing').value = 'true';
+                const template = templates[selectedTemplateName];
+                document.getElementById('templateName').value = selectedTemplateName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                document.getElementById('templateFields').value = template.fields.map(field => field.label).join(', ');
+                document.getElementById('templateContent').value = template.content;
             }
         });
-    }
-
-    // Back button
-    const backButton = document.getElementById('backToForm');
-    if (backButton) {
-        backButton.addEventListener('click', () => {
-            previewSection.style.display = 'none';
-            templateForm.style.display = 'block';
-        });
-    }
-
-    // Generate email
-    generateEmailBtn.addEventListener('click', () => {
-        const formData = {
-            recipientName: document.getElementById('recipientName')?.value || '',
-            projectName: document.getElementById('projectName')?.value || '',
-            senderName: document.getElementById('senderName')?.value || '',
-            startDate: document.getElementById('startDate')?.value || '',
-        };
-
-        // Collect leave request data
-        if (selectedTemplate === 'sick-leave') {
-            formData.employeeName = document.getElementById('sick_employeeName')?.value || '';
-            formData.teamLeaderName = document.getElementById('sick_teamLeaderName')?.value || '';
-            formData.designation = document.getElementById('sick_designation')?.value || '';
-            formData.leaveDate = document.getElementById('sick_leaveDate')?.value || '';
-            formData.leaveReason = document.getElementById('sick_leaveReason')?.value || '';
-        } else if (selectedTemplate === 'casual-leave') {
-            formData.employeeName = document.getElementById('casual_employeeName')?.value || '';
-            formData.teamLeaderName = document.getElementById('casual_teamLeaderName')?.value || '';
-            formData.designation = document.getElementById('casual_designation')?.value || '';
-            formData.leaveDate = document.getElementById('casual_leaveDate')?.value || '';
-            formData.leaveReason = document.getElementById('casual_leaveReason')?.value || '';
-        } else if (selectedTemplate === 'unpaid-leave') {
-            formData.employeeName = document.getElementById('unpaid_employeeName')?.value || '';
-            formData.teamLeaderName = document.getElementById('unpaid_teamLeaderName')?.value || '';
-            formData.designation = document.getElementById('unpaid_designation')?.value || '';
-            formData.leaveDate = document.getElementById('unpaid_leaveDate')?.value || '';
-            formData.leaveReason = document.getElementById('unpaid_leaveReason')?.value || '';
-        } else if (selectedTemplate === 'dev-testing-started') {
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.username = document.getElementById('username').value;
-            formData.password = document.getElementById('password').value;
-            formData.dueDate = document.getElementById('dueDate').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.testDocName = document.getElementById('testDocName').value;
-            formData.pcName = document.getElementById('pcName').value;
-            formData.teamLeadName = document.getElementById('teamLeadName').value;
-            formData.approvalDeadline = document.getElementById('approvalDeadline').value;
-        } else if (selectedTemplate === 'dev-testing-completed') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.language = document.getElementById('language').value;
-            formData.sizeLimit = document.getElementById('sizeLimit').value;
-            formData.maxUploadLimit = document.getElementById('maxUploadLimit').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-            formData.deviationsCount = document.getElementById('deviationsCount').value;
-            formData.funcBugsCount = document.getElementById('funcBugsCount').value;
-            formData.htmlBugsCount = document.getElementById('htmlBugsCount').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.workingDays = document.getElementById('workingDays').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.username = document.getElementById('username').value;
-            formData.password = document.getElementById('password').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.dueDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'dev-testing-rejected') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.criticalBugs = document.getElementById('criticalBugs').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-            formData.newBugs = document.getElementById('newBugs').value;
-            formData.otherBugs = document.getElementById('otherBugs').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.username = document.getElementById('username').value;
-            formData.password = document.getElementById('password').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.endDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'dev-retesting-started') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.previousTotalIssues = document.getElementById('previousTotalIssues').value;
-            formData.previousBugsCount = document.getElementById('previousBugsCount').value;
-            formData.previousBugReportLink = document.getElementById('previousBugReportLink').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.username = document.getElementById('username').value;
-            formData.password = document.getElementById('password').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.dueDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'dev-retesting-rejected') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.totalReopenedBugs = document.getElementById('totalReopenedBugs').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-            formData.newBugs = document.getElementById('newBugs').value;
-            formData.criticalBugs = document.getElementById('criticalBugs').value;
-            formData.previousBugReportLink = document.getElementById('previousBugReportLink').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.username = document.getElementById('username').value;
-            formData.password = document.getElementById('password').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.endDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'html-comparison-started') {
-            return `<div style="${baseStyle} max-width: 800px; margin: 0 auto;">
-                <h2 style="${headingStyles}; color: #f9c42f; text-align: center; font-size: 22px; border-bottom: 2px solid #f9c42f; padding-bottom: 10px;">Subject: HTML Comparison Test Started</h2>
-                
-                <p style="margin: 15px 0;">Dear <strong>${formData.recipientName}</strong>,</p>
-                
-                <p style="margin-bottom: 20px;">The HTML Comparison Test has been initiated. Below are the details for your reference:</p>
-                
-                <div style="${darkSection}">
-                    <h3 style="${headingStyles}; color: #f9c42f; margin-top: 0;">Project Details</h3>
-                    
-                    <table style="${tableStyles}">
-                        <tr>
-                            <td style="${cellStyles} width: 30%; background-color: #333;"><strong>GitLab Repository:</strong></td>
-                            <td style="${cellStyles}">${formData.repositoryName || 'Not specified'}</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <div style="${darkSection}">
-                    <h3 style="${headingStyles}; color: #f9c42f; margin-top: 0;">Access Credentials</h3>
-                    
-                    <table style="${tableStyles}">
-                        <tr>
-                            <td style="${cellStyles} width: 30%; background-color: #333;"><strong>Test URL:</strong></td>
-                            <td style="${cellStyles}">${formData.testUrl || 'Not specified'}</td>
-                        </tr>
-                        <tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>Username:</strong></td>
-                            <td style="${cellStyles}">${formData.username || 'Not specified'}</td>
-                        </tr>
-                        <tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>Password:</strong></td>
-                            <td style="${cellStyles}">${formData.password || 'Not specified'}</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <div style="${darkSection}">
-                    <h3 style="${headingStyles}; color: #f9c42f; margin-top: 0;">Tools Being Used</h3>
-                    
-                    <table style="${tableStyles}">
-                        <tr>
-                            <td style="${cellStyles} width: 30%; background-color: #333;"><strong>Jam:</strong></td>
-                            <td style="${cellStyles}">Bug Recording</td>
-                        </tr>
-                        <tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>GitLab:</strong></td>
-                            <td style="${cellStyles}">Bug Reporting</td>
-                        </tr>
-                        <tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>Scrcpy:</strong></td>
-                            <td style="${cellStyles}">Mobile Screen Mirroring</td>
-                        </tr>
-                        ${formData.toolsList ? `<tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>Other Tools:</strong></td>
-                            <td style="${cellStyles}">${formData.toolsList}</td>
-                        </tr>` : ''}
-                    </table>
-                </div>
-                
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #fd7e14;">
-                        <h3 style="${headingStyles}; color: #fd7e14; margin-top: 0;">Test Environment</h3>
-                        
-                        <table style="${tableStyles}">
-                            <tr>
-                                <td style="${cellStyles} background-color: #e9ecef;"><strong>Operating Systems:</strong></td>
-                                <td style="${cellStyles}">macOS, Linux, Android, iOS</td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #6f42c1;">
-                        <h3 style="${headingStyles}; color: #6f42c1; margin-top: 0;">Browsers</h3>
-                        
-                        <table style="${tableStyles}">
-                            <tr>
-                                <td style="${cellStyles} background-color: #e9ecef;"><strong>Supported:</strong></td>
-                                <td style="${cellStyles}">${formData.browsersList || 'Safari, Firefox, Brave, Chrome'}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                
-                <div style="${darkSection}">
-                    <h3 style="${headingStyles}; color: #f9c42f; margin-top: 0;">Test Devices</h3>
-                    
-                    <ul style="list-style-type: none; padding-left: 5px; margin: 10px 0;">
-                        <li style="margin-bottom: 8px; padding: 5px; background-color: #333; border-radius: 4px;">
-                            <span style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: #20c997; color: white; border-radius: 50%; margin-right: 10px;">1</span>
-                            <strong>${formData.device1 || 'MacBook Pro'}</strong>
-                        </li>
-                        ${formData.device2 ? `<li style="margin-bottom: 8px; padding: 5px; background-color: #333; border-radius: 4px;">
-                            <span style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: #20c997; color: white; border-radius: 50%; margin-right: 10px;">2</span>
-                            <strong>${formData.device2}</strong>
-                        </li>` : ''}
-                        ${formData.device3 ? `<li style="padding: 5px; background-color: #333; border-radius: 4px;">
-                            <span style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: #20c997; color: white; border-radius: 50%; margin-right: 10px;">3</span>
-                            <strong>${formData.device3}</strong>
-                        </li>` : ''}
-                    </ul>
-                </div>
-                
-                <div style="${darkSection}">
-                    <h3 style="${headingStyles}; color: #f9c42f; margin-top: 0;">Test Duration</h3>
-                    
-                    <table style="${tableStyles}">
-                        <tr>
-                            <td style="${cellStyles} width: 30%; background-color: #333;"><strong>Start Date:</strong></td>
-                            <td style="${cellStyles}">${formatDate(formData.startDate) || 'Not specified'}</td>
-                        </tr>
-                        <tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>End Date:</strong></td>
-                            <td style="${cellStyles}">${formatDate(formData.endDate) || 'Not specified'}</td>
-                        </tr>
-                        <tr>
-                            <td style="${cellStyles} background-color: #333;"><strong>Total Days:</strong></td>
-                            <td style="${cellStyles}">${formData.duration || 'Not specified'}</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <p style="margin: 25px 0 15px 0;">Please feel free to reach out if you have any questions or need further information.</p>
-                
-                <p style="margin-top: 30px; border-top: 1px solid #dee2e6; padding-top: 15px;">Best regards,<br><strong style="color: #0056b3;">${formData.senderName || 'QA Team'}</strong></p>
-            </div>`;
-        } else if (selectedTemplate === 'html-comparison-completed') {
-            formData.bugCount = document.getElementById('bugCount').value;
-            formData.deviationCount = document.getElementById('deviationCount').value;
-            formData.suggestionCount = document.getElementById('suggestionCount').value;
-            formData.correctionCount = document.getElementById('correctionCount').value;
-            formData.htmlCount = document.getElementById('htmlCount').value;
-            formData.performanceCount = document.getElementById('performanceCount').value;
-            formData.totalBugs = calculateTotalBugs(formData);
-        } else if (selectedTemplate === 'before-live-started') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.totalIssuesResolved = document.getElementById('totalIssuesResolved').value;
-            formData.bugsFixed = document.getElementById('bugsFixed').value;
-            formData.previousBugReportLink = document.getElementById('previousBugReportLink').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.username = document.getElementById('username').value;
-            formData.password = document.getElementById('password').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.dueDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'before-live-rejected') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.reopenedBugs = document.getElementById('reopenedBugs').value;
-            formData.majorBugs = document.getElementById('majorBugs').value;
-            formData.criticalBugs = document.getElementById('criticalBugs').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.endDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'before-live-approval') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.criticalBugs = document.getElementById('criticalBugs').value;
-            formData.majorBugs = document.getElementById('majorBugs').value;
-            formData.minorBugs = document.getElementById('minorBugs').value;
-            formData.performanceScore = document.getElementById('performanceScore').value;
-            formData.accessibilityScore = document.getElementById('accessibilityScore').value;
-            formData.seoScore = document.getElementById('seoScore').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.endDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'after-live-started') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.liveUrl = document.getElementById('liveUrl').value;
-            formData.monitoringPeriod = document.getElementById('monitoringPeriod').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-            formData.previousBugReportLink = document.getElementById('previousBugReportLink').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.dueDate = document.getElementById('dueDate').value;
-        } else if (selectedTemplate === 'after-live-completed') {
-            formData.websiteName = document.getElementById('websiteName').value;
-            formData.backendName = document.getElementById('backendName').value;
-            formData.liveUrl = document.getElementById('liveUrl').value;
-            formData.totalIssues = document.getElementById('totalIssues').value;
-            formData.newBugs = document.getElementById('newBugs').value;
-            formData.criticalBugs = document.getElementById('criticalBugs').value;
-            formData.otherBugs = document.getElementById('otherBugs').value;
-            formData.performanceScore = document.getElementById('performanceScore').value;
-            formData.uptime = document.getElementById('uptime').value;
-            formData.toolsList = document.getElementById('toolsList').value;
-            formData.browsersList = document.getElementById('browsersList').value;
-            formData.frontendUrl = document.getElementById('frontendUrl').value;
-            formData.backendUrl = document.getElementById('backendUrl').value;
-            formData.bugTrackerUrl = document.getElementById('bugTrackerUrl').value;
-            formData.device1 = document.getElementById('device1').value;
-            formData.device2 = document.getElementById('device2').value;
-            formData.device3 = document.getElementById('device3').value;
-            formData.startDate = document.getElementById('startDate').value;
-            formData.endDate = document.getElementById('dueDate').value;
-            formData.bugsCount = document.getElementById('bugsCount').value;
-        }
-
-        const emailContent = generateEmailContent(selectedTemplate, formData);
-        emailPreview.innerHTML = emailContent;
-        templateForm.style.display = 'none';
-        previewSection.style.display = 'block';
-        copyEmailBtn.disabled = false;
     });
 
-    // Copy email to clipboard
-    copyEmailBtn.addEventListener('click', () => {
-        const emailText = emailPreview.innerText || emailPreview.textContent;
-        navigator.clipboard.writeText(emailText)
-            .then(() => {
-                alert('Email copied to clipboard!');
-            })
-            .catch(err => {
-                console.error('Failed to copy email: ', err);
-                alert('Failed to copy email. Please try again.');
+    // Close modal
+    closeModal.addEventListener('click', () => {
+        adminTemplateForm.querySelectorAll('.form-group').forEach((group, index) => {
+            if (index === 0 && group.querySelector('#templateSelect')) {
+                group.remove();
+            }
+        });
+        modal.style.display = 'none';
+        resetForm();
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            adminTemplateForm.querySelectorAll('.form-group').forEach((group, index) => {
+                if (index === 0 && group.querySelector('#templateSelect')) {
+                    group.remove();
+                }
             });
+            modal.style.display = 'none';
+            resetForm();
+        }
     });
 
-    // Email content generation based on template
-    function generateEmailContent(template, formData) {
-        // Helper function to format values and provide defaults
-        function formatValue(value, defaultValue = '') {
-            if (value === undefined || value === null || value === '') {
-                return defaultValue;
-            }
-            return value;
+    // Generate form fields dynamically
+    function generateForm(fields) {
+        popupFormContent.innerHTML = '';
+        fields.forEach(field => {
+            const fieldHTML = `
+                <div class="form-group">
+                    <label for="${field.id}">${field.label}:</label>
+                    <div class="custom-input">
+                        <i class="fas fa-${getIconForField(field.id)}"></i>
+                        ${field.type === 'textarea' ? 
+                            `<textarea id="${field.id}" name="${field.id}" placeholder="${field.placeholder}" ${field.required ? 'required' : ''} rows="5"></textarea>` :
+                            `<input type="${field.type}" id="${field.id}" name="${field.id}" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`
+                        }
+                    </div>
+                </div>
+            `;
+            popupFormContent.innerHTML += fieldHTML;
+        });
+    }
+
+    // Get appropriate Font Awesome icon for each field
+    function getIconForField(fieldId) {
+        const icons = {
+            projectName: 'project-diagram',
+            recipientName: 'user',
+            websiteName: 'globe',
+            backendName: 'server',
+            frontendUrl: 'link',
+            backendUrl: 'link',
+            username: 'user-lock',
+            password: 'lock',
+            criticalBugs: 'exclamation-triangle',
+            startDate: 'calendar-alt',
+            endDate: 'calendar-check',
+            totalIssues: 'list',
+            bugsCount: 'bug',
+            bugtrackerUrl: 'bug',
+            newBugs: 'plus-circle',
+            viewNewBugsLink: 'link',
+            viewCriticalBugsLink: 'link',
+            otherBugs: 'info-circle',
+            viewOtherBugsLink: 'link',
+            viewAllIssuesLink: 'link',
+            browser1: 'desktop',
+            browser2: 'desktop',
+            browser3: 'desktop',
+            browser4: 'desktop',
+            device1: 'mobile-alt',
+            device2: 'tablet-alt',
+            device3: 'laptop',
+            osVersion: 'cog',
+            yourName: 'signature',
+            taskDescription: 'tasks',
+            dueDate: 'calendar-alt',
+            testDocName: 'file-alt',
+            pcName: 'user-tie',
+            teamLeadName: 'user-shield',
+            approvalDeadline: 'calendar-check',
+            senderName: 'signature',
+            testDocLink: 'link',
+            totalReopenedBugs: 'bug',
+            viewReopenedBugsLink: 'link',
+            previousBugReportLink: 'link'
+        };
+        return icons[fieldId] || 'pen';
+    }
+
+    // Handle form submission
+    popupForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        formData = new FormData(popupForm);
+        const data = Object.fromEntries(formData);
+        if (validateForm(data)) {
+            modal.style.display = 'none';
+            generateAndDisplayEmail(data);
+        } else {
+            alert('Please fill all required fields.');
         }
-        
-        // Clean up formData to prevent [object Object] or [undefined]
-        Object.keys(formData).forEach(key => {
-            if (formData[key] === undefined || formData[key] === null) {
-                formData[key] = '';
+    });
+
+    // Handle admin template submission (add or edit)
+    adminTemplateForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const isEditing = document.getElementById('isEditing').value === 'true';
+        const templateNameInput = document.getElementById('templateName').value.toLowerCase().replace(/\s+/g, '-');
+        const templateFieldsInput = document.getElementById('templateFields').value.split(',').map(field => field.trim());
+        const templateContent = document.getElementById('templateContent').value;
+
+        if (templateNameInput && templateFieldsInput.length && templateContent) {
+            const fields = templateFieldsInput.map(field => ({
+                id: field.toLowerCase().replace(/\s+/g, '-'),
+                label: field.charAt(0).toUpperCase() + field.slice(1),
+                type: 'text',
+                placeholder: `Enter ${field.toLowerCase()}`,
+                required: true
+            }));
+            const templateName = isEditing ? editingTemplate : templateNameInput;
+            templates[templateName] = { fields, content: templateContent, icon: 'fas fa-file-alt' };
+
+            if (isEditing) {
+                updateTemplateSegment(templateName, 'fas fa-file-alt');
+            } else {
+                addTemplateSegment(templateName, 'fas fa-file-alt');
+            }
+            adminTemplateForm.querySelectorAll('.form-group').forEach((group, index) => {
+                if (index === 0 && group.querySelector('#templateSelect')) {
+                    group.remove();
+                }
+            });
+            modal.style.display = 'none';
+            adminTemplateForm.reset();
+            alert(`${isEditing ? 'Edited' : 'Added'} template successfully!`);
+            editingTemplate = null;
+        } else {
+            alert('Please fill all fields for the new template.');
+        }
+    });
+
+    // Validate form data
+    function validateForm(data) {
+        const requiredFields = templates[selectedTemplate]?.fields || [];
+        return requiredFields.every(field => !field.required || (data[field.id] && data[field.id].trim() !== ''));
+    }
+
+    // Generate and display email immediately
+    function generateAndDisplayEmail(data) {
+        const template = templates[selectedTemplate];
+        let emailContent = template.content;
+        for (const [key, value] of Object.entries(data)) {
+            emailContent = emailContent.replace(`{${key}}`, value || 'N/A');
+        }
+        emailPreview.innerHTML = `<pre>${emailContent}</pre>`;
+        previewSection.style.display = 'block';
+        copyEmailButton.disabled = false;
+        window.scrollTo({ top: previewSection.offsetTop, behavior: 'smooth' });
+    }
+
+    // Handle copy email button click
+    copyEmailButton.addEventListener('click', () => {
+        const emailContent = emailPreview.textContent;
+        navigator.clipboard.writeText(emailContent).then(() => {
+            alert('Email content copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+        });
+    });
+
+    // Handle back to form button click
+    backToFormButton.addEventListener('click', () => {
+        previewSection.style.display = 'none';
+        wheelSegments.forEach(seg => seg.classList.remove('selected'));
+        resetForm();
+    });
+
+    // Add new template segment to wheel
+    function addTemplateSegment(templateName, templateIcon) {
+        const segmentHTML = `
+            <div class="wheel-segment custom-template" data-template="${templateName}">
+                <i class="${templateIcon}"></i> ${templateName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            </div>
+        `;
+        wheel.insertAdjacentHTML('beforeend', segmentHTML);
+        const newSegment = wheel.lastElementChild;
+        newSegment.addEventListener('click', () => {
+            selectedTemplate = newSegment.getAttribute('data-template');
+            wheelSegments.forEach(seg => seg.classList.remove('selected'));
+            newSegment.classList.add('selected');
+            const fields = templates[selectedTemplate]?.fields || [];
+            generateForm(fields);
+            modalTitle.textContent = 'Template Form';
+            popupForm.style.display = 'block';
+            adminTemplateForm.style.display = 'none';
+            modal.style.display = 'flex';
+        });
+        // Update wheelSegments NodeList
+        wheelSegments = document.querySelectorAll('.wheel-segment');
+        updateWheelLayout();
+    }
+
+    // Update existing template segment
+    function updateTemplateSegment(templateName, templateIcon) {
+        const segment = document.querySelector(`.wheel-segment[data-template="${templateName}"]`);
+        if (segment) {
+            segment.innerHTML = `<i class="${templateIcon}"></i> ${templateName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
+            // Reattach event listener
+            segment.removeEventListener('click', segment._clickHandler);
+            segment._clickHandler = () => {
+                selectedTemplate = segment.getAttribute('data-template');
+                wheelSegments.forEach(seg => seg.classList.remove('selected'));
+                segment.classList.add('selected');
+                const fields = templates[selectedTemplate]?.fields || [];
+                generateForm(fields);
+                modalTitle.textContent = 'Template Form';
+                popupForm.style.display = 'block';
+                adminTemplateForm.style.display = 'none';
+                modal.style.display = 'flex';
+            };
+            segment.addEventListener('click', segment._clickHandler);
+        }
+    }
+
+    // Update wheel layout dynamically
+    function updateWheelLayout() {
+        const segments = document.querySelectorAll('.wheel-segment');
+        const angleStep = 360 / segments.length;
+        segments.forEach((segment, index) => {
+            segment.style.transform = `rotate(${index * angleStep}deg) translate(150px) rotate(-${index * angleStep}deg)`;
+        });
+    }
+
+    // Initialize wheel layout
+    updateWheelLayout();
+
+    // Reset form and state
+    function resetForm() {
+        popupForm.reset();
+        adminTemplateForm.reset();
+        formData = null;
+        selectedTemplate = null;
+        editingTemplate = null;
+        document.getElementById('isEditing').value = 'false';
+        previewSection.style.display = 'none';
+        copyEmailButton.disabled = true;
+        emailPreview.innerHTML = '';
+        popupForm.style.display = 'block';
+        adminTemplateForm.style.display = 'none';
+        adminTemplateForm.querySelectorAll('.form-group').forEach((group, index) => {
+            if (index === 0 && group.querySelector('#templateSelect')) {
+                group.remove();
             }
         });
-        
-        // Common email parts
-        const greeting = `Hi Team,\n\n`;
-        const signature = `\n\nBest Regards,\n${formatValue(formData.senderName)}`;
-        
-        // Template specific content
-        switch(template) {
-            case 'dev-testing-started':
-                return {
-                    subject: `[${formatValue(formData.projectName)}] Dev Testing Started`,
-                    content: `${greeting}Please be informed that Dev Testing has been started for ${formatValue(formData.projectName)}.\n\n` +
-                            `Testing Overview:\n` +
-                            `Frontend URL: ${formatValue(formData.frontendUrl)}\n` +
-                            `Backend URL: ${formatValue(formData.backendUrl)}\n` +
-                            `Username: ${formatValue(formData.username)}\n` +
-                            `Password: ${formatValue(formData.password)}\n` +
-                            `GitLab Bug Tracker: ${formatValue(formData.gitlabUrl)}\n\n` +
-                            `Testing Method: Manual Testing\n` +
-                            `Testing Tools: Chrome Dev Tools, Postman\n\n` +
-                            `Browsers Covered:\n` +
-                            `- Chrome\n- Firefox\n- Safari\n- Edge\n\n` +
-                            `Devices Used:\n` +
-                            formatDevices(formData) + '\n\n' +
-                            `Testing Timeline:\n` +
-                            `Start Date: ${formatValue(formData.startDate)}\n` +
-                            `Expected Due Date: ${formatValue(formData.dueDate)}\n\n` +
-                            `Test Document:\n` +
-                            `Name: ${formatValue(formData.testDocName)}\n` +
-                            `Project Coordinator: ${formatValue(formData.pcName)}\n` +
-                            `Team Lead: ${formatValue(formData.teamLeadName)}\n` +
-                            `Approval Deadline: ${formatValue(formData.approvalDeadline)}\n\n` +
-                            `Note: Please verify and approve the test document by the specified deadline.` +
-                            signature
-                };
-                
-            case 'before-live-approved-with-bugs':
-                return {
-                    subject: `[${formatValue(formData.projectName)}] Before Live Testing Approved with Bugs`,
-                    content: `${greeting}Please be informed that Before Live Testing has been completed for ${formatValue(formData.projectName)} with the following bugs:\n\n` +
-                            `Testing Overview:\n` +
-                            `Frontend URL: ${formatValue(formData.frontendUrl)}\n` +
-                            `Backend URL: ${formatValue(formData.backendUrl)}\n` +
-                            `Username: ${formatValue(formData.username)}\n` +
-                            `Password: ${formatValue(formData.password)}\n\n` +
-                            `Bug Summary:\n` +
-                            `Total Bugs: ${formatValue(formData.totalBugs, '0')}\n` +
-                            `Functional Bugs: ${formatValue(formData.functionalBugs, '0')}\n` +
-                            `HTML Bugs: ${formatValue(formData.htmlBugs, '0')}\n` +
-                            `SEO Bugs: ${formatValue(formData.seoBugs, '0')}\n` +
-                            `Bug Report Link: ${formatValue(formData.bugReportLink)}\n\n` +
-                            `Testing Timeline:\n` +
-                            `Start Date: ${formatValue(formData.startDate)}\n` +
-                            `End Date: ${formatValue(formData.endDate)}\n` +
-                            `Duration: ${formatValue(formData.duration)}\n\n` +
-                            `Note: Please review and fix the reported bugs.` +
-                            signature
-                };
-                
-            // ... existing templates ...
-        }
-    }
-
-    // Helper function to format dependencies
-    function formatDependencies(formData) {
-        let dependencies = '';
-        for (let i = 1; i <= 4; i++) {
-            const dep = formData[`dependency${i}`];
-            if (dep) {
-                dependencies += `${i}. ${dep}\n`;
-            }
-        }
-        return dependencies || 'No pending dependencies';
-    }
-
-    // Helper function to format devices
-    function formatDevices(formData) {
-        let devices = '';
-        for (let i = 1; i <= 3; i++) {
-            const device = formData[`device${i}`];
-            const os = formData[`deviceOs${i}`];
-            if (device && os) {
-                devices += `${i}. ${device} (${os})\n`;
-            }
-        }
-        return devices || 'No devices specified';
     }
 });
-
-// Helper function to calculate total bugs for HTML comparison template
-function calculateTotalBugs(data) {
-    return parseInt(data.bugCount || 0) + 
-           parseInt(data.deviationCount || 0) + 
-           parseInt(data.suggestionCount || 0) + 
-           parseInt(data.correctionCount || 0) + 
-           parseInt(data.htmlCount || 0) + 
-           parseInt(data.performanceCount || 0);
-} 
