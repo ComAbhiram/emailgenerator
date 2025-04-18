@@ -1,204 +1,960 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inter Smart QA Email Generator</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo-container">
-                <img src="images/logo.png" alt="Logo" class="logo">
-            </div>
-            <h1>Email Template Generator</h1>
-            <button id="adminAccessBtn" class="action-btn" style="margin: 20px auto; display: block;">Admin Access</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;700&family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>QA Portal</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+      :root {
+        --royal-blue: #0f1c3f;
+        --royal-gold: #d4af37;
+        --royal-gold-light: #f4e5c2;
+        --royal-purple: #5d3a9b;
+      }
+      
+      body {
+        background: linear-gradient(135deg, var(--royal-blue) 0%, #1a2a57 100%);
+        color: #f8f8f8;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        visibility: hidden; /* Hide body initially */
+      }
+      
+      .royal-button {
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        background: linear-gradient(135deg, var(--royal-gold) 0%, #c9a227 100%);
+        color: var(--royal-blue);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+                    0 1px 3px rgba(0, 0, 0, 0.08),
+                    inset 0 1px 0 rgba(255,255,255,0.2);
+      }
+      
+      .royal-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+                    transparent, 
+                    rgba(255, 255, 255, 0.4), 
+                    transparent);
+        transition: all 0.7s ease;
+        z-index: -1;
+      }
+      
+      .royal-button:hover::before {
+        left: 100%;
+      }
+      
+      .royal-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 14px rgba(212, 175, 55, 0.3), 
+                    0 3px 6px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255,255,255,0.2);
+      }
+      
+      .royal-button:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255,255,255,0.2);
+      }
+      
+      .royal-input,
+      .royal-textarea {
+        transition: all 0.3s ease;
+        background: rgba(15, 28, 63, 0.5);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        color: #f8f8f8;
+        backdrop-filter: blur(5px);
+      }
+      
+      .royal-input::placeholder,
+      .royal-textarea::placeholder {
+        color: rgba(248, 248, 248, 0.6);
+      }
+      
+      .royal-input:focus,
+      .royal-textarea:focus {
+        border-color: var(--royal-gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        background: rgba(15, 28, 63, 0.7);
+      }
+      
+      .royal-tab {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+      
+      .royal-tab:hover {
+        color: var(--royal-gold);
+        transform: translateY(-2px);
+      }
+      
+      .royal-tab::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: var(--royal-gold);
+        transition: width 0.3s ease;
+      }
+      
+      .royal-tab:hover::after {
+        width: 100%;
+      }
+      
+      .royal-tab.active {
+        color: var(--royal-gold);
+        font-weight: 600;
+      }
+      
+      .royal-tab.active::after {
+        width: 100%;
+      }
+      
+      .header {
+        background: var(--royal-blue);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      .content-container {
+        background: linear-gradient(145deg, rgba(15, 28, 63, 0.7) 0%, rgba(26, 42, 87, 0.7) 100%);
+        border-radius: 1rem;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .content-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+        z-index: -1;
+      }
+      
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .royal-divider {
+        height: 1px;
+        background: linear-gradient(90deg, 
+                    transparent, 
+                    rgba(212, 175, 55, 0.5), 
+                    transparent);
+        margin: 1.5rem 0;
+      }
+      
+      .royal-card {
+        background: rgba(15, 28, 63, 0.6);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 0.75rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+        cursor: pointer;
+      }
+      
+      .royal-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        border-color: rgba(212, 175, 55, 0.4);
+      }
+      
+      .royal-title {
+        font-family: 'Cinzel', serif;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 1px;
+      }
+      
+      .royal-badge {
+        background: linear-gradient(135deg, var(--royal-gold) 0%, #c9a227 100%);
+        color: var(--royal-blue);
+        font-weight: 600;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        background: var(--royal-blue);
+        min-width: 280px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        z-index: 1;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+      }
+      
+      .dropdown:hover .dropdown-menu {
+        display: block;
+      }
+      
+      .dropdown-item {
+        padding: 12px 16px;
+        display: block;
+        transition: all 0.2s;
+      }
+      
+      .dropdown-item:hover {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--royal-gold);
+        padding-left: 20px;
+      }
+      
+      .template-category {
+        margin-bottom: 2rem;
+      }
+      
+      .template-category h3 {
+        font-family: 'Cinzel', serif;
+        color: var(--royal-gold);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .access-badge {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--royal-gold);
+        color: var(--royal-gold);
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .access-badge svg {
+        margin-right: 0.5rem;
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 28, 63, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+      }
+      
+      .modal-container {
+        background: linear-gradient(145deg, rgba(15, 28, 63, 0.95) 0%, rgba(26, 42, 87, 0.95) 100%);
+        border-radius: 1rem;
+        padding: 2rem;
+        width: 90%;
+        max-width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+      }
+      
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .modal-title {
+        font-family: 'Cinzel', serif;
+        color: var(--royal-gold);
+        font-size: 1.5rem;
+      }
+      
+      .close-modal {
+        background: none;
+        border: none;
+        color: var(--royal-gold);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      
+      .form-group.full-width {
+        grid-column: span 2;
+      }
+      
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        background: rgba(15, 28, 63, 0.7);
+        color: white;
+        transition: all 0.3s;
+      }
+      
+      .form-input:focus {
+        border-color: var(--royal-gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        outline: none;
+      }
+      
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      
+      .preview-container {
+        background: rgba(15, 28, 63, 0.5);
+        border: 1px dashed rgba(212, 175, 55, 0.4);
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-top: 1.5rem;
+        white-space: pre-wrap;
+        font-family: monospace;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      
+      .logo-img {
+        height: 40px;
+        width: auto;
+      }
+      
+      .issues-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+      }
+      
+      .issues-table th, .issues-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      }
+      
+      .issues-table th {
+        font-weight: 600;
+        color: var(--royal-gold);
+      }
+
+      /* Loader styles */
+      .page-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 28, 63, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        visibility: visible; /* Ensure loader is visible initially */
+        opacity: 1;
+        transition: opacity 0.5s ease;
+      }
+
+      .loader {
+        width: 48px;
+        height: 48px;
+        margin: auto;
+        position: relative;
+      }
+      .loader:before {
+        content: '';
+        width: 48px;
+        height: 5px;
+        background: #000;
+        opacity: 0.25;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        border-radius: 50%;
+        animation: shadow 0.5s linear infinite;
+      }
+      .loader:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        animation: bxSpin 0.5s linear infinite;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 4px;
+      }
+      @keyframes bxSpin {
+        17% {
+          border-bottom-right-radius: 3px;
+        }
+        25% {
+          transform: translateY(9px) rotate(22.5deg);
+        }
+        50% {
+          transform: translateY(18px) scale(1, 0.9) rotate(45deg);
+          border-bottom-right-radius: 40px;
+        }
+        75% {
+          transform: translateY(9px) rotate(67.5deg);
+        }
+        100% {
+          transform: translateY(0) rotate(90deg);
+        }
+      }
+      @keyframes shadow {
+        0%, 100% {
+          transform: scale(1, 1);
+        }
+        50% {
+          transform: scale(1.2, 1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-loader" id="pageLoader">
+      <span class="loader"></span>
+    </div>
+    <div class="relative flex min-h-screen flex-col" id="mainContent" style="visibility: hidden;">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="header flex items-center justify-between px-8 py-5 bg-royal-blue shadow-md">
+          <div class="flex items-center gap-4">
+            <img src="images/logo.png" alt="QA Portal Logo" class="logo-img">
+          </div>
+          <nav class="flex items-center gap-6">
+            <a href="https://intersmartqa.github.io/QATabs/" class="royal-tab px-3 py-3 text-lg">QA Tabs</a>
+            <a href="mailto:abhiram@intersmart.in" class="royal-tab px-3 py-3 text-lg">Contact</a>
+          </nav>
         </header>
-        
-        <main>
-            <!-- Template Selection -->
-            <div class="template-selection">
-                <h2>Select Email Template</h2>
-                <div class="template-container">
-                    <div class="template-group">
-                        <h3 class="template-group-title">Dev Phase Templates</h3>
-                        <div class="template-buttons">
-                            <button class="template-btn" data-template="dev-testing-started">
-                                <i class="fas fa-rocket"></i> Dev Testing Started
-                            </button>
-                            <button class="template-btn" data-template="dev-testing-rejected">
-                                <i class="fas fa-ban"></i> Dev Testing Rejected
-                            </button>
-                            <button class="template-btn" data-template="dev-retesting-completed">
-                                <i class="fas fa-check-circle"></i> Dev Retesting Completed
-                            </button>
-                            <button class="template-btn" data-template="dev-retesting-started">
-                                <i class="fas fa-redo"></i> Dev Retesting Started
-                            </button>
-                            <button class="template-btn" data-template="dev-retesting-phase-rejected">
-                                <i class="fas fa-times-circle"></i> Dev Retesting Phase Rejected
-                            </button>
-                            <button class="template-btn" data-template="dev-testing-completed">
-                                <i class="fas fa-check-double"></i> Dev Testing Completed
-                            </button>
-                        </div>
-                    </div>
 
-                    <div class="template-group">
-                        <h3 class="template-group-title">HTML Templates</h3>
-                        <div class="template-buttons">
-                            <button class="template-btn" data-template="html-comparison-started">
-                                <i class="fas fa-code"></i> HTML Comparison Started
-                            </button>
-                            <button class="template-btn" data-template="html-comparison-completed">
-                                <i class="fas fa-check-double"></i> HTML Comparison Completed
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="template-group">
-                        <h3 class="template-group-title">Before Live Templates</h3>
-                        <div class="template-buttons">
-                            <button class="template-btn" data-template="before-live-started">
-                                <i class="fas fa-hourglass-start"></i> Before Live Started
-                            </button>
-                            <button class="template-btn" data-template="before-live-approved-with-bugs">
-                                <i class="fas fa-exclamation-triangle"></i> Before Live Approved with Bugs
-                            </button>
-                            <button class="template-btn" data-template="before-live-approval">
-                                <i class="fas fa-award"></i> Before Live Approval
-                            </button>
-                            <button class="template-btn" data-template="before-live-rejected">
-                                <i class="fas fa-ban"></i> Before Live Rejected
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="template-group">
-                        <h3 class="template-group-title">After Live Templates</h3>
-                        <div class="template-buttons">
-                            <button class="template-btn" data-template="after-live-started">
-                                <i class="fas fa-globe"></i> After Live Started
-                            </button>
-                            <button class="template-btn" data-template="after-live-completed">
-                                <i class="fas fa-check-circle"></i> After Live Completed
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="template-group">
-                        <h3 class="template-group-title">Leave Templates</h3>
-                        <div class="template-buttons">
-                            <button class="template-btn" data-template="sick-leave">
-                                <i class="fas fa-medkit"></i> Sick Leave
-                            </button>
-                            <button class="template-btn" data-template="casual-leave">
-                                <i class="fas fa-umbrella-beach"></i> Casual Leave
-                            </button>
-                            <button class="template-btn" data-template="unpaid-leave">
-                                <i class="fas fa-wallet"></i> Unpaid Leave
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="template-group" id="customTemplatesGroup">
-                        <h3 class="template-group-title">Custom Templates</h3>
-                        <div class="template-buttons"></div>
-                    </div>
-                </div>
+        <main class="flex flex-1 flex-col items-center justify-center p-8">
+          <div class="content-container w-full max-w-4xl">
+            <div class="mb-6 text-center">
+              <h2 class="royal-title mb-4 text-3xl font-bold md:text-4xl">
+                Quality Assurance Templates Portal
+              </h2>
+              <p class="mx-auto max-w-2xl text-lg opacity-80">
+                Below is the list of all available templates. Click on any template to view or use it.
+              </p>
             </div>
 
-            <!-- Admin Template Management Section -->
-            <div class="template-selection" id="adminTemplateSection" style="display: none;">
-                <h2>Admin Template Management</h2>
-                <div class="admin-actions">
-                    <button class="template-btn" id="addNewTemplateBtn">
-                        <i class="fas fa-plus"></i> Add New Template
-                    </button>
-                    <button class="template-btn" id="editTemplatesBtn">
-                        <i class="fas fa-edit"></i> Edit Templates
-                    </button>
-                </div>
-            </div>
+            <div class="royal-divider"></div>
 
-            <!-- Preview Section -->
-            <div class="preview-section" style="display: none;">
-                <h2>Generated Email</h2>
-                <div id="emailPreview" class="email-preview"></div>
-                <div class="action-buttons">
-                    <button id="backToForm" class="action-btn">Back to Templates</button>
-                    <button id="copyEmail" class="action-btn" disabled>Copy Email</button>
-                </div>
+            <!-- Template Cards -->
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div class="royal-card p-5" onclick="openTemplateForm('html-comparison-started')">
+                <h4 class="font-medium mb-2">HTML Comparison Test Started</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for initiating HTML comparison tests.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('html-comparison-completed')">
+                <h4 class="font-medium mb-2">HTML Comparison Completed</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for completed HTML comparison tests.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-started')">
+                <h4 class="font-medium mb-2">Dev Testing Started</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for starting Dev testing.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-rejected')">
+                <h4 class="font-medium mb-2">Dev Testing Rejected</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for rejected Dev testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-completed')">
+                <h4 class="font-medium mb-2">Dev Testing Completed</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-phase-started')">
+                <h4 class="font-medium mb-2">Dev Retesting Phase Started</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for starting Dev retesting phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-phase-rejected')">
+                <h4 class="font-medium mb-2">Dev Retesting Phase Rejected</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for rejected Dev retesting phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-completed-reopened-bugs')">
+                <h4 class="font-medium mb-2">Dev Re-testing Completed with Reopened Bugs</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev re-testing with reopened bugs.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-completed-no-reopened-bugs')">
+                <h4 class="font-medium mb-2">Dev Re-testing Completed with No Reopened Bugs</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev re-testing with no reopened bugs.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-started')">
+                <h4 class="font-medium mb-2">Before Live Testing Started</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for starting before-live testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-rejected')">
+                <h4 class="font-medium mb-2">Before Live Testing Rejected</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for rejected before-live testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-completed-approved-bugs')">
+                <h4 class="font-medium mb-2">Before Live Testing Completed: Approved with Bugs to Fix Before Live</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for approved before-live testing with bugs to fix.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-completed')">
+                <h4 class="font-medium mb-2">Before Live Testing Completed</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for completed before-live testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('after-live-testing-started')">
+                <h4 class="font-medium mb-2">After Live Testing Started</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for starting after-live testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
+              <div class="royal-card p-5" onclick="openTemplateForm('after-live-testing-completed')">
+                <h4 class="font-medium mb-2">After Live Testing Completed</h4>
+                <p class="text-sm text-gray-300 mb-3">Use this template for completed after-live testing phases.</p>
+                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
+                  Use Template
+                </button>
+              </div>
             </div>
+          </div>
         </main>
-    </div>
 
-    <!-- Modal for Popup Form -->
-    <div id="popupModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn">×</span>
-            <h2 id="modalTitle">Template Form</h2>
-            <form id="popupForm">
-                <div id="popupFormContent"></div>
-                <button type="submit" class="action-btn">Submit</button>
-            </form>
-            <!-- Admin Template Management Form -->
-            <form id="adminTemplateForm" style="display: none;">
-                <input type="hidden" id="isEditing" name="isEditing" value="false">
-                <div class="form-group">
-                    <label for="templateName">Template Name:</label>
-                    <div class="custom-input">
-                        <i class="fas fa-font"></i>
-                        <input type="text" id="templateName" name="templateName" placeholder="Enter template name (e.g., New Template)" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="templateFields">Replaceable Fields (comma-separated, e.g., name, email, date):</label>
-                    <div class="custom-input">
-                        <i class="fas fa-list"></i>
-                        <input type="text" id="templateFields" name="templateFields" placeholder="Enter fields to replace (e.g., name, email, date)" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="templateContent">Email Content (use {field} for placeholders, e.g., {name}):</label>
-                    <div class="custom-input">
-                        <i class="fas fa-envelope"></i>
-                        <textarea id="templateContent" name="templateContent" placeholder="Enter email content (e.g., Dear {name}, your {email} is set)" rows="5" required></textarea>
-                    </div>
-                </div>
-                <button type="submit" class="action-btn">Save Template</button>
-            </form>
+        <!-- Dev Testing Started Modal -->
+        <div id="devTestingModal" class="modal-overlay" style="display: none;">
+          <!-- Previous Dev Testing Started modal content -->
+          <!-- ... -->
         </div>
+
+        <!-- Dev Testing Rejected Modal -->
+        <div id="devTestingRejectedModal" class="modal-overlay" style="display: none;">
+          <div class="modal-container">
+            <div class="modal-header">
+              <h3 class="modal-title">Dev Testing Rejected Template</h3>
+              <button class="close-modal" onclick="closeRejectedModal()">&times;</button>
+            </div>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="rejectedRecipientName" class="form-label">Recipient's Name</label>
+                <input type="text" id="rejectedRecipientName" class="form-input" placeholder="e.g., Shekha">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedProjectName" class="form-label">Project Name</label>
+                <input type="text" id="rejectedProjectName" class="form-input" placeholder="e.g., Life Smoothies">
+              </div>
+              
+              <div class="form-group">
+                <label for="websiteName" class="form-label">Website Name</label>
+                <input type="text" id="websiteName" class="form-input" placeholder="e.g., Life Smoothies">
+              </div>
+              
+              <div class="form-group">
+                <label for="backendName" class="form-label">Backend Name</label>
+                <input type="text" id="backendName" class="form-input" placeholder="e.g., Admin Panel">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedFrontendUrl" class="form-label">Frontend URL</label>
+                <input type="text" id="rejectedFrontendUrl" class="form-input" placeholder="e.g., https://www.mfix.dev6.intersmarthosting.in">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedBackendUrl" class="form-label">Backend URL</label>
+                <input type="text" id="rejectedBackendUrl" class="form-input" placeholder="e.g., https://www.mfix.dev6.intersmarthosting.in/admin/login">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedUsername" class="form-label">Username</label>
+                <input type="text" id="rejectedUsername" class="form-input" placeholder="e.g., issadmin">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedPassword" class="form-label">Password</label>
+                <input type="text" id="rejectedPassword" class="form-input" placeholder="e.g., aV%)4F^b#3HWMpmC$V">
+              </div>
+              
+              <div class="form-group">
+                <label for="criticalBugs" class="form-label">Critical Bugs Count</label>
+                <input type="text" id="criticalBugs" class="form-input" placeholder="e.g., 5">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedStartDate" class="form-label">Start Date</label>
+                <input type="text" id="rejectedStartDate" class="form-input" placeholder="e.g., 13th Mar 2025">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedEndDate" class="form-label">End Date</label>
+                <input type="text" id="rejectedEndDate" class="form-input" placeholder="e.g., 15th Mar 2025">
+              </div>
+              
+              <div class="form-group">
+                <label for="totalIssues" class="form-label">Total Issues Reviewed</label>
+                <input type="text" id="totalIssues" class="form-input" placeholder="e.g., 93">
+              </div>
+              
+              <div class="form-group">
+                <label for="bugsCount" class="form-label">Total Bugs Identified</label>
+                <input type="text" id="bugsCount" class="form-input" placeholder="e.g., 27">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedBugtrackerUrl" class="form-label">Bugtracker URL</label>
+                <input type="text" id="rejectedBugtrackerUrl" class="form-input" placeholder="e.g., https://gitlab.com/ManualProjects/wordpress/cmswordcust15/life-smoothies">
+              </div>
+              
+              <div class="form-group">
+                <label for="newBugs" class="form-label">New Bugs Count</label>
+                <input type="text" id="newBugs" class="form-input" placeholder="e.g., 20">
+              </div>
+              
+              <div class="form-group">
+                <label for="otherBugs" class="form-label">Other Bugs Count</label>
+                <input type="text" id="otherBugs" class="form-input" placeholder="e.g., 7">
+              </div>
+              
+              <div class="form-group">
+                <label for="browser1" class="form-label">Browser 1</label>
+                <input type="text" id="browser1" class="form-input" placeholder="e.g., Safari">
+              </div>
+              
+              <div class="form-group">
+                <label for="browser2" class="form-label">Browser 2</label>
+                <input type="text" id="browser2" class="form-input" placeholder="e.g., Chrome">
+              </div>
+              
+              <div class="form-group">
+                <label for="browser3" class="form-label">Browser 3</label>
+                <input type="text" id="browser3" class="form-input" placeholder="e.g., Firefox">
+              </div>
+              
+              <div class="form-group">
+                <label for="browser4" class="form-label">Browser 4</label>
+                <input type="text" id="browser4" class="form-input" placeholder="e.g., Brave">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedDevice1" class="form-label">Device 1</label>
+                <input type="text" id="rejectedDevice1" class="form-input" placeholder="e.g., iPhone 13">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedOsVersion1" class="form-label">OS Version (Device 1)</label>
+                <input type="text" id="rejectedOsVersion1" class="form-input" placeholder="e.g., iOS 18.1">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedDevice2" class="form-label">Device 2</label>
+                <input type="text" id="rejectedDevice2" class="form-input" placeholder="e.g., Poco M6">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedDevice3" class="form-label">Device 3</label>
+                <input type="text" id="rejectedDevice3" class="form-input" placeholder="e.g., MacBook Pro">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedOsVersion3" class="form-label">OS Version (Device 3)</label>
+                <input type="text" id="rejectedOsVersion3" class="form-input" placeholder="e.g., Monterey">
+              </div>
+              
+              <div class="form-group">
+                <label for="rejectedYourName" class="form-label">Your Name</label>
+                <input type="text" id="rejectedYourName" class="form-input" placeholder="Your name">
+              </div>
+            </div>
+            
+            <div class="preview-container" id="rejectedEmailPreview">
+              <!-- Preview will be generated here -->
+            </div>
+            
+            <div class="modal-footer">
+              <button class="royal-button btn-secondary rounded-lg px-4 py-2" onclick="closeRejectedModal()">
+                Cancel
+              </button>
+              <button class="royal-button rounded-lg px-4 py-2" onclick="generateRejectedEmail()">
+                Generate Email
+              </button>
+              <button class="royal-button rounded-lg px-4 py-2" onclick="copyRejectedToClipboard()">
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <footer class="mt-16 border-t border-royal-gold/10 py-8 text-center">
+          <div class="container mx-auto px-6">
+            <div class="mb-6 flex justify-center space-x-6">
+              <a href="#" class="text-gray-400 hover:text-royal-gold transition-colors">
+                <span class="sr-only">Twitter</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-royal-gold transition-colors">
+                <span class="sr-only">GitHub</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-royal-gold transition-colors">
+                <span class="sr-only">LinkedIn</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
+                </svg>
+              </a>
+            </div>
+            <p class="text-base text-gray-400">
+              &copy; 2023 QA Portal. For authorized personnel only.
+            </p>
+          </div>
+        </footer>
+      </div>
     </div>
+    <script>
+      // Modal functions for Dev Testing Started
+      function openDevTestingModal() {
+        document.getElementById('devTestingModal').style.display = 'flex';
+      }
+      
+      function closeModal() {
+        document.getElementById('devTestingModal').style.display = 'none';
+      }
+      
+      // Modal functions for Dev Testing Rejected
+      function openDevTestingRejectedModal() {
+        document.getElementById('devTestingRejectedModal').style.display = 'flex';
+      }
+      
+      function closeRejectedModal() {
+        document.getElementById('devTestingRejectedModal').style.display = 'none';
+      }
+      
+      // Generate the rejected email template
+      function generateRejectedEmail() {
+        const recipientName = document.getElementById('rejectedRecipientName').value;
+        const projectName = document.getElementById('rejectedProjectName').value;
+        const websiteName = document.getElementById('websiteName').value;
+        const backendName = document.getElementById('backendName').value;
+        const frontendUrl = document.getElementById('rejectedFrontendUrl').value;
+        const backendUrl = document.getElementById('rejectedBackendUrl').value;
+        const username = document.getElementById('rejectedUsername').value;
+        const password = document.getElementById('rejectedPassword').value;
+        const criticalBugs = document.getElementById('criticalBugs').value;
+        const startDate = document.getElementById('rejectedStartDate').value;
+        const endDate = document.getElementById('rejectedEndDate').value;
+        const totalIssues = document.getElementById('totalIssues').value;
+        const bugsCount = document.getElementById('bugsCount').value;
+        const bugtrackerUrl = document.getElementById('rejectedBugtrackerUrl').value;
+        const newBugs = document.getElementById('newBugs').value;
+        const otherBugs = document.getElementById('otherBugs').value;
+        const browser1 = document.getElementById('browser1').value;
+        const browser2 = document.getElementById('browser2').value;
+        const browser3 = document.getElementById('browser3').value;
+        const browser4 = document.getElementById('browser4').value;
+        const device1 = document.getElementById('rejectedDevice1').value;
+        const osVersion1 = document.getElementById('rejectedOsVersion1').value;
+        const device2 = document.getElementById('rejectedDevice2').value;
+        const device3 = document.getElementById('rejectedDevice3').value;
+        const osVersion3 = document.getElementById('rejectedOsVersion3').value;
+        const yourName = document.getElementById('rejectedYourName').value;
+        
+        // Format devices with OS versions
+        const device1Text = osVersion1 ? `${device1} (${osVersion1})` : device1;
+        const device3Text = osVersion3 ? `${device3} (${osVersion3})` : device3;
+        
+        const emailTemplate = `Subject: Dev Testing Phase Rejected – ${projectName} – Multiple Critical Bugs Found
 
-    <!-- Fixed Footer (hidden since Generate Email button is no longer needed) -->
-    <div class="fixed-footer">
-        <button id="generateEmailFixed" class="primary-btn" style="display: none;">
-            <i class="fas fa-envelope"></i> Generate Email
-        </button>
-    </div>
+Dear ${recipientName},
 
-    <!-- Static Footer -->
-    <footer class="static-footer">
-        <p>This Page is Created by and is for Inter Smart QA Team</p>
-        <p><strong>QA Members:</strong></p>
-        <p>QA Analysts: 
-            <a href="mailto:aswathi@intersmart.in">Aswathi M Asok</a>, 
-            <a href="mailto:minnu@intersmart.in">Minnu Sebastian</a>
-        </p>
-        <p>Lead QA Analyst: 
-            <a href="mailto:abhiram@intersmart.in">Abhiram P Mohan</a>
-        </p>
-        <p>
-            <a href="#">InterSmart Solution</a> | 
-            <a href="https://github.com">GitHub</a> | 
-            <a href="https://linkedin.com">LinkedIn</a>
-        </p>
-    </footer>
+I regret to inform you that the Dev testing phase for ${projectName} has been rejected due to the identification of multiple critical bugs. Below are the details for your reference:
 
-    <script src="script.js"></script>
-</body>
+Testing Details:
+
+Website: ${websiteName}
+Backend: ${backendName}
+Frontend URL: ${frontendUrl}
+Backend URL: ${backendUrl}
+Username: ${username}
+Password: ${password}
+
+Reason for Rejection:
+
+During the testing phase, ${criticalBugs} critical bugs were identified, which pose significant risks to functionality, security, or performance. These issues prevent the phase from being approved.
+
+Testing Summary:
+
+Start Date: ${startDate}
+End Date: ${endDate}
+Total Issues Reviewed: ${totalIssues}
+Total Bugs Identified: ${bugsCount}
+Critical Bugs: ${criticalBugs}
+Bugtracker: ${bugtrackerUrl}
+
+Issues Breakdown:
+Category        Count       Details
+Total Issues    ${totalIssues}      ${bugtrackerUrl}/issues
+New Bugs        ${newBugs}          ${bugtrackerUrl}/new-bugs
+Critical Bugs   ${criticalBugs}     ${bugtrackerUrl}/critical-bugs
+Other Bugs      ${otherBugs}        ${bugtrackerUrl}/other-bugs
+
+Testing Method: Manual + Automation
+
+Testing Tools:
+Selenium: Bug validation
+Burp Suite: Security testing
+Axe: Accessibility checks
+JAM: Bug recording
+GitLab (Bug Tracker): ${bugtrackerUrl}
+Screaming Frog: SEO analysis
+
+Browsers Covered: ${browser1}, ${browser2}, ${browser3}, ${browser4}
+
+Devices Used:
+${device1Text}
+${device2}
+${device3Text}
+
+Next Steps:
+1. The development team is requested to prioritize and resolve the ${criticalBugs} critical bugs.
+2. A revised testing phase will be scheduled once these issues are addressed and verified.
+3. Please review the detailed bug report at ${bugtrackerUrl} and let me know if you need further clarification or support.
+
+Best regards,
+${yourName}
+`;
+        
+        document.getElementById('rejectedEmailPreview').textContent = emailTemplate;
+      }
+      
+      // Copy rejected template to clipboard
+      function copyRejectedToClipboard() {
+        const previewText = document.getElementById('rejectedEmailPreview').textContent;
+        navigator.clipboard.writeText(previewText).then(() => {
+          alert('Email template copied to clipboard!');
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+          alert('Failed to copy to clipboard. Please try again.');
+        });
+      }
+      
+      // Close modals when clicking outside
+      window.addEventListener('click', (event) => {
+        if (event.target === document.getElementById('devTestingModal')) {
+          closeModal();
+        }
+        if (event.target === document.getElementById('devTestingRejectedModal')) {
+          closeRejectedModal();
+        }
+      });
+
+      // Show the page only after it's fully loaded
+      window.addEventListener('load', () => {
+        const loader = document.getElementById('pageLoader');
+        const mainContent = document.getElementById('mainContent');
+        setTimeout(() => {
+          loader.style.opacity = '0';
+          setTimeout(() => {
+            loader.style.display = 'none';
+            document.body.style.visibility = 'visible';
+            mainContent.style.visibility = 'visible';
+          }, 500); // Allow time for opacity transition
+        }, 500); // Keep loader visible for at least 500ms
+      });
+    </script>
+    <script src="script.js" type="module"></script>
+    <!-- Ensure the CSV file is accessible -->
+    <script>
+      // Example CSV file path
+      const csvFilePath = '/path/to/qa-email-templates.csv'; // Replace with the actual path to your CSV file
+    </script>
+  </body>
 </html>
