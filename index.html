@@ -489,118 +489,84 @@
                 Quality Assurance Templates Portal
               </h2>
               <p class="mx-auto max-w-2xl text-lg opacity-80">
-                Below is the list of all available templates. Click on any template to view or use it.
+                Below is the list of all available templates. Click on any template to use it.
               </p>
             </div>
 
             <div class="royal-divider"></div>
 
-            <!-- Template Cards -->
-            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <div class="royal-card p-5" onclick="openTemplateForm('html-comparison-started')">
-                <h4 class="font-medium mb-2">HTML Comparison Test Started</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for initiating HTML comparison tests.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
+            <!-- Template Categories -->
+            <div class="template-category">
+              <h3>HTML Comparison</h3>
+              <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div class="royal-card p-5" onclick="openTemplateForm('html-comparison-started')">
+                  <h4 class="font-medium mb-2">HTML Comparison Test Started</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for initiating HTML comparison tests.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
+                <div class="royal-card p-5" onclick="openTemplateForm('html-comparison-completed')">
+                  <h4 class="font-medium mb-2">HTML Comparison Completed</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for completed HTML comparison tests.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
               </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('html-comparison-completed')">
-                <h4 class="font-medium mb-2">HTML Comparison Completed</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for completed HTML comparison tests.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
+            </div>
+
+            <div class="template-category">
+              <h3>Dev Testing</h3>
+              <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-started')">
+                  <h4 class="font-medium mb-2">Dev Testing Started</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for starting Dev testing.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
+                <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-rejected')">
+                  <h4 class="font-medium mb-2">Dev Testing Rejected</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for rejected Dev testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
+                <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-completed')">
+                  <h4 class="font-medium mb-2">Dev Testing Completed</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
               </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-started')">
-                <h4 class="font-medium mb-2">Dev Testing Started</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for starting Dev testing.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
+            </div>
+
+            <div class="template-category">
+              <h3>Before Live Testing</h3>
+              <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-started')">
+                  <h4 class="font-medium mb-2">Before Live Testing Started</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for starting before-live testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
+                <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-rejected')">
+                  <h4 class="font-medium mb-2">Before Live Testing Rejected</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for rejected before-live testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
+                <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-completed')">
+                  <h4 class="font-medium mb-2">Before Live Testing Completed</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for completed before-live testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
               </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-rejected')">
-                <h4 class="font-medium mb-2">Dev Testing Rejected</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for rejected Dev testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-testing-completed')">
-                <h4 class="font-medium mb-2">Dev Testing Completed</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-phase-started')">
-                <h4 class="font-medium mb-2">Dev Retesting Phase Started</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for starting Dev retesting phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-phase-rejected')">
-                <h4 class="font-medium mb-2">Dev Retesting Phase Rejected</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for rejected Dev retesting phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-completed-reopened-bugs')">
-                <h4 class="font-medium mb-2">Dev Re-testing Completed with Reopened Bugs</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev re-testing with reopened bugs.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('dev-retesting-completed-no-reopened-bugs')">
-                <h4 class="font-medium mb-2">Dev Re-testing Completed with No Reopened Bugs</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for completed Dev re-testing with no reopened bugs.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-started')">
-                <h4 class="font-medium mb-2">Before Live Testing Started</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for starting before-live testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-rejected')">
-                <h4 class="font-medium mb-2">Before Live Testing Rejected</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for rejected before-live testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-completed-approved-bugs')">
-                <h4 class="font-medium mb-2">Before Live Testing Completed: Approved with Bugs to Fix Before Live</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for approved before-live testing with bugs to fix.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('before-live-testing-completed')">
-                <h4 class="font-medium mb-2">Before Live Testing Completed</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for completed before-live testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('after-live-testing-started')">
-                <h4 class="font-medium mb-2">After Live Testing Started</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for starting after-live testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
-              </div>
-              <div class="royal-card p-5" onclick="openTemplateForm('after-live-testing-completed')">
-                <h4 class="font-medium mb-2">After Live Testing Completed</h4>
-                <p class="text-sm text-gray-300 mb-3">Use this template for completed after-live testing phases.</p>
-                <button class="royal-button rounded-lg px-3 py-1.5 text-xs">
-                  Use Template
-                </button>
+            </div>
+
+            <div class="template-category">
+              <h3>After Live Testing</h3>
+              <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div class="royal-card p-5" onclick="openTemplateForm('after-live-testing-started')">
+                  <h4 class="font-medium mb-2">After Live Testing Started</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for starting after-live testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
+                <div class="royal-card p-5" onclick="openTemplateForm('after-live-testing-completed')">
+                  <h4 class="font-medium mb-2">After Live Testing Completed</h4>
+                  <p class="text-sm text-gray-300 mb-3">Use this template for completed after-live testing phases.</p>
+                  <button class="royal-button rounded-lg px-3 py-1.5 text-xs">Use Template</button>
+                </div>
               </div>
             </div>
           </div>
@@ -793,7 +759,7 @@
               </a>
             </div>
             <p class="text-base text-gray-400">
-              &copy; 2023 QA Portal. For authorized personnel only.
+              &copy; 2025 QA Email Portal. For authorized personnel only.
             </p>
           </div>
         </footer>
